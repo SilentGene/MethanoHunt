@@ -290,7 +290,7 @@ def main():
     parser.add_argument("-i", "--input", nargs="+", required=True,
                         help="Input tax.tsv files (supports glob, e.g. '*.tax.tsv')")
     parser.add_argument("-db", "--database", required=False,
-                        help="Database file methane_cycler.tsv (default: methane_cycler_db.tsv in script directory)")
+                        help="Database file methanohunt_db.tsv (default: methanohunt_db.tsv in script directory)")
     parser.add_argument("-o", "--output", required=True,
                         help="Output TSV file")
     args = parser.parse_args()
@@ -299,12 +299,11 @@ def main():
         db_path = args.database
     else:
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(script_dir, "methane_cycler_db.tsv")
+        db_path = os.path.join(script_dir, "methanohunt_db.tsv")
 
     if not os.path.exists(db_path):
         import sys
-        sys.exit(f"Error: Database file not found at '{db_path}'. Please provide it with -db or place 'methane_cycler_db.tsv' in the script directory.")
-
+        sys.exit(f"Error: Database file not found at '{db_path}'. Please provide it with -db or place 'methanohunt_db.tsv' in the script directory.")
     db = load_database(db_path)
     tax_files = load_singlem_files(args.input)
     print(f"Found {len(tax_files)} singleM tax.tsv files to process.")

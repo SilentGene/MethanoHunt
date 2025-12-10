@@ -22,7 +22,7 @@ python methanohunt.py -i <input_files> [-db <database>] -o <output_file>
 ### Arguments
 
 - `-i, --input` (required): Input tax.tsv files. Supports glob patterns (e.g., `*.tax.tsv`)
-- `-db, --database` (optional): Path to MethanoHunt database file. Default: `methane_cycler_db.tsv` in script directory
+- `-db, --database` (optional): Path to MethanoHunt database file. Default: [methanohunt_db.tsv](methanohunt_db.tsv) in script directory
 - `-o, --output` (required): Output TSV file path. Also generates an interactive HTML chart
 
 ### Example
