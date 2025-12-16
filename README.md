@@ -10,13 +10,18 @@ MethanoHunt processes taxonomy tables from metagenomic profilers (like singleM) 
 
 Requires Python 3.6+ with dependencies:
 ```bash
+# environment setup
 pip install pandas natsort plotly
+
+# download the repository
+cd /my/software/
+git clone https://github.com/SilentGene/MethanoHunt.git
 ```
 
 ## Usage
 
 ```bash
-python methanohunt.py -i <input_files> [-db <database>] -o <output_file>
+python /my/software/MethanoHunt/methanohunt.py -i <input_files> [-db <database>] -o <output_file>
 ```
 
 ### Arguments
@@ -43,12 +48,17 @@ Screenshot of the interactive chart:
 
 ## Database Format
 
-The database TSV should contain:
+The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. It contains the following columns:
+
 - `GTDB_taxonomy`: Taxonomic identifier
 - `Subgroup`: Metabolic subgroup
 - `Classification`: Functional classification
 - `Exception_taxonomy` (optional): Comma-separated taxa to exclude
 
+> You can customize the database by editing this TSV file.
+
 ## Notes
 
-Functional classifications are taxonomy-based and may have false positives. Verification with functional gene analysis is recommended.
+Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
+
+...🧙‍♂️🧬
