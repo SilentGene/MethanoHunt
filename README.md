@@ -21,7 +21,7 @@ git clone https://github.com/SilentGene/MethanoHunt.git
 ## Usage
 
 ```bash
-python /my/software/MethanoHunt/methanohunt.py -i <input_files> [-db <database>] -o <output_file>
+python /my/software/MethanoHunt/methanohunt.py -i <input_files> [-db <database>] -o <output_tsv>
 ```
 
 ### Arguments
@@ -57,8 +57,44 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 
 > You can customize the database by editing this TSV file.
 
+## A example workflow from raw reads to MethanoHunt results
+
+Say you have 10 metagenomic samples in paried-end FASTQ format, with filenames like `sample1_R1.fastq.gz` / `sample1_R2.fastq.gz`, `sample2_R1.fastq.gz` / `sample2_R2.fastq.gz`, ..., `sample10_R1.fastq.gz` / `sample10_R2.fastq.gz`.
+
+**Step 1**: Run singleM to generate taxonomic profiles
+
+> You don't need to trim or QC the reads before running singleM
+
+```bash
+cd /my/raw_reads/  # change to the directory with your FASTQ files
+SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')
+conda activate singlem  # activate your singleM conda environment
+
+mkdir -p ../singleM_results  # create singleM output directory
+
+# Run singleM for each sample
+for SAMPLE in $SAMPLES; do
+    singlem pipe -1 ${SAMPLE}_R1.fastq.gz -2 ${SAMPLE}_R2.fastq.gz --threads 4 \
+    --taxonomic-profile ../singleM_results/"$SAMPLE"_singlem.tax.tsv \
+    --taxonomic-profile-krona ../singleM_results/"$SAMPLE"_singlem.tax-krona.html \
+    --otu-table ../singleM_results/"$SAMPLE"_singlem.otu.tsv
+done
+```
+
+**Step 2**: Run MethanoHunt on the generated taxonomic profiles
+
+```bash
+mkdir -p ../methanohunt_results  # create MethanoHunt output directory
+cd ../methanohunt_results
+python /my/software/MethanoHunt/methanohunt.py -i ../singleM_results/*_singlem.tax.tsv -o methanohunt_results.tsv
+```
+
 ## Notes
 
 Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
+
+## Roadmap
+
+Support for functional marker gene-based analysis
 
 ...🧙‍♂️🧬
