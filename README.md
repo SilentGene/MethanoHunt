@@ -59,7 +59,7 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 
 ## A example workflow from raw reads to MethanoHunt results
 
-Say you have 10 metagenomic samples in paried-end FASTQ format, with filenames like `sample1_R1.fastq.gz` / `sample1_R2.fastq.gz`, `sample2_R1.fastq.gz` / `sample2_R2.fastq.gz`, ..., `sample10_R1.fastq.gz` / `sample10_R2.fastq.gz`.
+Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
 
 **Step 1**: Run singleM to generate taxonomic profiles
 
@@ -67,7 +67,7 @@ Say you have 10 metagenomic samples in paried-end FASTQ format, with filenames l
 
 ```bash
 cd /my/raw_reads/  # change to the directory with your FASTQ files
-SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')
+SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')  # get sample names
 conda activate singlem  # activate your singleM conda environment
 
 mkdir -p ../singleM_results  # create singleM output directory
