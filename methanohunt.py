@@ -198,7 +198,11 @@ def generate_stacked_bar_chart(result, output_file):
     # Set Classification as categorical with prescribed order
     plot_df["Classification"] = pd.Categorical(plot_df["Classification"], categories=db_classification_order, ordered=True)
     
-    # Sort by classification (now respects DB order) first, then by sample
+    # Set Sample as categorical with natural sorted order
+    all_samples_sorted = natsorted(plot_df["Sample"].unique())
+    plot_df["Sample"] = pd.Categorical(plot_df["Sample"], categories=all_samples_sorted, ordered=True)
+    
+    # Sort by classification (now respects DB order) first, then by sample (now uses natural sort)
     plot_df = plot_df.sort_values(["Classification", "Sample"])
 
     # Build individual figures per classification so each has its own legend and y-axis title
