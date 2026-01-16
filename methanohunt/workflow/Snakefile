@@ -1,0 +1,13 @@
+configfile: "config.yaml"
+
+# Set default target
+rule all:
+    input:
+        f"{config['output_dir']}/MethanoHunt_report.html"
+
+# Include modular rules
+include: "rules/hmm.smk"
+include: "rules/pplacer.smk"
+include: "rules/classify.smk"
+include: "rules/quant.smk"
+include: "rules/vis.smk"

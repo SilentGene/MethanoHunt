@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-
-"""
-Summarize relative abundance of methane cyclers from taxonomy tables.
-
-Usage: python methanohunt.py -i *.tax.tsv [-db methanohunt_db.tsv] -o methanohunt_output.tsv
-
--i/--input: Input taxonomy tables (in long-format taxonomic abundance table from singleM or other profilers). Supports glob patterns.
--db/--database: Path to MethanoHunt database file (default: 'methanohunt_db.tsv').
--o/--output: Output TSV file to save relative abundance results. Also generates an interactive HTML chart with the same base name.
-
-The script will look for 'methanohunt_db.tsv' in the script directory by default if -db is not provided.
-"""
-
-import argparse
 import glob
 import pandas as pd
 from natsort import natsorted
@@ -20,12 +5,16 @@ import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
 import os
+import sys
 
 def load_database(db_file):
     """
     Load MethanoHunt database.
     Extract keyword from the last '__' in GTDB_taxonomy for matching.
     """
+    if not os.path.exists(db_file):
+        raise FileNotFoundError(f"Database file not found at '{db_file}'.")
+        
     db = pd.read_csv(db_file, sep="\t")
 
     # Ensure Exception_taxonomy exists and normalize to list for later subtraction
@@ -53,9 +42,16 @@ def load_singlem_files(input_patterns):
     Load all sample.tax.tsv files using glob patterns.
     """
     files = []
+    # If input_patterns is a string (single pattern), make it a list
+    if isinstance(input_patterns, str):
+        input_patterns = [input_patterns]
+        
     for p in input_patterns:
-        files.extend(glob.glob(p))
-    return sorted(files)
+        # Expand glob patterns
+        matches = glob.glob(p)
+        files.extend(matches)
+    
+    return sorted(list(set(files))) # Remove duplicates
 
 
 def get_sample_name(tax_file):
@@ -63,12 +59,18 @@ def get_sample_name(tax_file):
     Extract sample name from the first column of singleM tax.tsv file.
     Assumes sample name is the value in the first row, first column.
     """
-    df = pd.read_csv(tax_file, sep="\t")
-    sample = df.iloc[0, 0]
-    # if sample contains '_1' at the end, remove it
-    if sample.endswith("_1"):
-        sample = sample[:-2]
-    return str(sample)
+    try:
+        df = pd.read_csv(tax_file, sep="\t")
+        if df.empty:
+            return os.path.basename(tax_file).replace(".tax.tsv", "")
+        sample = df.iloc[0, 0]
+        # if sample contains '_1' at the end, remove it
+        if str(sample).endswith("_1"):
+            sample = str(sample)[:-2]
+        return str(sample)
+    except Exception as e:
+        print(f"Warning: Could not read sample name from {tax_file}: {e}")
+        return os.path.basename(tax_file)
 
 
 def compute_abundances(db, tax_files):
@@ -84,45 +86,65 @@ def compute_abundances(db, tax_files):
         subgroup_to_keyword = dict(zip(results["Subgroup"], results["keyword"]))
 
     for tax_file in tax_files:
-        df = pd.read_csv(tax_file, sep="\t")
-        df.columns = ["sample", "coverage", "taxonomy"]
+        try:
+            df = pd.read_csv(tax_file, sep="\t")
+            # singleM/standard tax files usually have headers or specific columns.
+            # The original script enforced columns=["sample", "coverage", "taxonomy"] logic implicitly if read without header?
+            # Original script: df = pd.read_csv(tax_file, sep="\t"); df.columns = ["sample", "coverage", "taxonomy"]
+            # Let's verify input format reliability. Assuming it works as per original script.
+            if len(df.columns) < 3:
+                 # Try reading without header if columns are few, or assume it has header.
+                 # Original script logic suggests it just overwrites columns.
+                 pass
 
-        sample_name = get_sample_name(tax_file)
-        sample_names.append(sample_name)
+            # Standardize columns for processing
+            # note: blindly assigning columns can be risky if input varies, but we follow legacy logic
+            df.columns = ["sample", "coverage", "taxonomy"] 
 
-        total_cov = df["coverage"].sum()
-        if total_cov == 0:
-            raise RuntimeError(f"Total coverage is zero in file: {tax_file}")
+            sample_name = get_sample_name(tax_file)
+            sample_names.append(sample_name)
 
-        # Compute coverage per keyword once so exceptions can reuse it
-        coverage_by_keyword = {}
-        for keyword in results["keyword"]:
-            matched_cov = df[df["taxonomy"].str.contains(keyword, na=False)]["coverage"].sum()
-            coverage_by_keyword[keyword] = matched_cov
+            total_cov = df["coverage"].sum()
+            if total_cov == 0:
+                print(f"Warning: Total coverage is zero in file: {tax_file}. Skipping.")
+                results[sample_name] = 0.0
+                continue
 
-        rel_abundances = []
-        for idx, keyword in enumerate(results["keyword"]):
-            matched_cov = coverage_by_keyword.get(keyword, 0)
+            # Compute coverage per keyword once so exceptions can reuse it
+            coverage_by_keyword = {}
+            for keyword in results["keyword"]:
+                matched_cov = df[df["taxonomy"].str.contains(keyword, na=False)]["coverage"].sum()
+                coverage_by_keyword[keyword] = matched_cov
 
-            exception_cov = 0
-            if "Exception_taxonomy_list" in results.columns:
-                for exc in results.at[idx, "Exception_taxonomy_list"]:
-                    exc_keyword = subgroup_to_keyword.get(exc)
-                    if exc_keyword:
-                        exception_cov += coverage_by_keyword.get(exc_keyword, 0)
+            rel_abundances = []
+            for idx, keyword in enumerate(results["keyword"]):
+                matched_cov = coverage_by_keyword.get(keyword, 0)
 
-            adjusted_cov = matched_cov - exception_cov
-            rel_abundance = (max(adjusted_cov, 0) / total_cov) * 100
-            rel_abundances.append(rel_abundance)
+                exception_cov = 0
+                if "Exception_taxonomy_list" in results.columns:
+                    for exc in results.at[idx, "Exception_taxonomy_list"]:
+                        exc_keyword = subgroup_to_keyword.get(exc)
+                        if exc_keyword:
+                            exception_cov += coverage_by_keyword.get(exc_keyword, 0)
 
-        results[sample_name] = rel_abundances
+                adjusted_cov = matched_cov - exception_cov
+                rel_abundance = (max(adjusted_cov, 0) / total_cov) * 100
+                rel_abundances.append(rel_abundance)
+
+            results[sample_name] = rel_abundances
+        
+        except Exception as e:
+            print(f"Error processing file {tax_file}: {e}")
 
     # Sort sample columns using natsorted
     sorted_samples = natsorted(sample_names)
     # Keep original columns (except keyword) at the start
     base_cols = [c for c in db.columns if c not in ("keyword", "Exception_taxonomy_list")]
+    
+    # Ensure all sorted_samples exist in results (in case of skip)
+    valid_samples = [s for s in sorted_samples if s in results.columns]
 
-    return results[base_cols + sorted_samples]
+    return results[base_cols + valid_samples]
 
 
 def generate_stacked_bar_chart(result, output_file):
@@ -285,39 +307,30 @@ def generate_stacked_bar_chart(result, output_file):
     print(f"Saved interactive chart to {html_file}")
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Summarize relative abundance of methane cyclers from singleM tax.tsv files.")
-    parser.add_argument("-i", "--input", nargs="+", required=True,
-                        help="Input tax.tsv files (supports glob, e.g. '*.tax.tsv')")
-    parser.add_argument("-db", "--database", required=False,
-                        help="Database file methanohunt_db.tsv (default: methanohunt_db.tsv in script directory)")
-    parser.add_argument("-o", "--output", required=True,
-                        help="Output TSV file")
-    args = parser.parse_args()
-
-    if args.database:
-        db_path = args.database
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(script_dir, "methanohunt_db.tsv")
-
-    if not os.path.exists(db_path):
-        import sys
-        sys.exit(f"Error: Database file not found at '{db_path}'. Please provide it with -db or place 'methanohunt_db.tsv' in the script directory.")
-    db = load_database(db_path)
-    tax_files = load_singlem_files(args.input)
+def run_taxonomy(input_patterns, database_path, output_file):
+    """
+    Main entry point for taxonomy analysis.
+    """
+    if not database_path:
+        # Fallback to default in package
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # database is now in methanohunt/database/methanohunt_db.tsv
+        # This file is in methanohunt/taxonomy.py
+        database_path = os.path.join(current_dir, "database", "methanohunt_db.tsv")
+    
+    if not os.path.exists(database_path):
+        raise FileNotFoundError(f"Database file not found at {database_path}")
+        
+    db = load_database(database_path)
+    tax_files = load_singlem_files(input_patterns)
     print(f"Found {len(tax_files)} singleM tax.tsv files to process.")
-
-    if len(tax_files) == 0:
-        raise RuntimeError("No tax.tsv files found. Please check -i argument.")
+    
+    if not tax_files:
+        print("No tax.tsv files found matching the pattern.")
+        return
 
     result = compute_abundances(db, tax_files)
-    result.to_csv(args.output, sep="\t", index=False)
-    print(f"Saved relative abundance results to {args.output}")
+    result.to_csv(output_file, sep="\t", index=False)
+    print(f"Saved relative abundance results to {output_file}")
     
-    # Generate visualization
-    generate_stacked_bar_chart(result, args.output)
-
-
-if __name__ == "__main__":
-    main()
+    generate_stacked_bar_chart(result, output_file)

@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.snakemake/
+methanohunt_results/
+*.html
+*.tsv
+*.bam
+*.bai
+*.jplace
+*.sto
+*.tbl

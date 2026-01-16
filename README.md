@@ -1,100 +1,83 @@
 # MethanoHunt
 
-A Python script to summarize the relative abundance of methane cyclers from taxonomic profiling data.
+A pipeline to profile methane cyclers from taxonomic profiling data or functional marker genes.
 
 ## Overview
 
-MethanoHunt processes taxonomy tables from metagenomic profilers (like singleM) and calculates the relative abundance of different methane metabolism groups. It generates both tabular results and interactive visualizations.
+MethanoHunt provides two main modules:
+1.  **Taxonomy**: Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
+2.  **Gene**: A pipeline to detect, classify, and quantify methane cycling marker genes (mcrA, pmoA, mmoA) from protein and nucleotide sequences.
 
 ## Installation
 
-Requires Python 3.6+ with dependencies:
-```bash
-# environment setup
-pip install pandas natsort plotly
+### Dependencies
+MethanoHunt requires:
+*   Python 3.8+
+*   Snakemake > 9.0
+*   HMMER
+*   pplacer
+*   Minimap2, Samtools
+*   Python packages: `pandas`, `natsort`, `plotly`, `click`, `pysam`
 
-# download the repository
-cd /my/software/
-git clone https://github.com/SilentGene/MethanoHunt.git
+### Conda Environment
+We recommend using Conda/Mamba:
+
+```bash
+conda env create -f environment.yaml
+conda activate methanohunt
+pip install .
 ```
 
 ## Usage
 
-```bash
-python /my/software/MethanoHunt/methanohunt.py -i <input_files> [-db <database>] -o <output_tsv>
-```
-
-### Arguments
-
-- `-i, --input` (required): Input tax.tsv files. Supports glob patterns (e.g., `*.tax.tsv`)
-- `-db, --database` (optional): Path to MethanoHunt database file. Default: [methanohunt_db.tsv](methanohunt_db.tsv) in script directory
-- `-o, --output` (required): Output TSV file path. Also generates an interactive HTML chart
-
-### Example
+### Taxonomy Module
+Analyze taxonomic abundance tables.
 
 ```bash
-python methanohunt.py -i singleM_results/*.tax.tsv -o methanohunt_results.tsv
+methanohunt taxonomy -i sample1.tax.tsv sample2.tax.tsv -o methanohunt_results.tsv
 ```
+
+*   `-i`: Input taxonomy tables (supports glob patterns).
+*   `-o`: Output TSV file. Also generates an HTML report.
+*   `-db`: (Optional) Custom database path.
+
+### Gene Module
+Analyze functional genes from protein sequences.
+
+```bash
+methanohunt gene --protein assembly.faa [-o output_dir] [-db database_dir]
+```
+
+**With abundance calculation (requires nucleotide genes and reads):**
+
+```bash
+methanohunt gene \
+    --protein assembly.faa \
+    --nucl assembly.genes.ffn \
+    -1 hits_R1.fq.gz -2 hits_R2.fq.gz \
+    -o my_results \
+    -db /path/to/database_folder
+```
+
+*   `--protein`: Input protein FASTA (.faa).
+*   `--nucl`: (Optional) Corresponding gene nucleotide FASTA (.ffn), required for abundance.
+*   `-1`, `-2`: (Optional) Reads for abundance quantification.
+*   `-db`: Database folder containing `.hmm` and `.refpkg` files for mcrA, pmoA, mmoA.
+*   `-o`: Output directory.
 
 ## Output
 
-- **TSV file**: Relative abundance (%) for each methane cycler group per sample
-- **HTML file**: Interactive stacked bar chart grouped by classification
+### Gene Module Output
+*   `classification.tsv`: Detected genes and their functional classification.
+*   `abundance.tsv`: TPM abundance of classified genes (if reads provided).
+*   `MethanoHunt_report.html`: Interactive visualization.
+*   `hmm/`, `pplacer/`: Intermediate results.
 
-Here is an example of the output [methanohunt_output.html](example_output.html).
+## Database
 
-Screenshot of the interactive chart:
-![MethanoHunt Chart](example.jpg)
-
-## Database Format
-
-The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. It contains the following columns:
-
-- `GTDB_taxonomy`: Taxonomic identifier
-- `Subgroup`: Metabolic subgroup
-- `Classification`: Functional classification
-- `Exception_taxonomy` (optional): Comma-separated taxa to exclude
-
-> You can customize the database by editing this TSV file.
-
-## A example workflow from raw reads to MethanoHunt results
-
-Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
-
-**Step 1**: Run singleM to generate taxonomic profiles
-
-> You don't need to trim or QC the reads before running singleM
-
-```bash
-cd /my/raw_reads/  # change to the directory with your FASTQ files
-SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')  # get sample names
-conda activate singlem  # activate your singleM conda environment
-
-mkdir -p ../singleM_results  # create singleM output directory
-
-# Run singleM for each sample
-for SAMPLE in $SAMPLES; do
-    singlem pipe -1 ${SAMPLE}_R1.fastq.gz -2 ${SAMPLE}_R2.fastq.gz --threads 4 \
-    --taxonomic-profile ../singleM_results/"$SAMPLE"_singlem.tax.tsv \
-    --taxonomic-profile-krona ../singleM_results/"$SAMPLE"_singlem.tax-krona.html \
-    --otu-table ../singleM_results/"$SAMPLE"_singlem.otu.tsv
-done
-```
-
-**Step 2**: Run MethanoHunt on the generated taxonomic profiles
-
-```bash
-mkdir -p ../methanohunt_results  # create MethanoHunt output directory
-cd ../methanohunt_results
-python /my/software/MethanoHunt/methanohunt.py -i ../singleM_results/*_singlem.tax.tsv -o methanohunt_results.tsv
-```
-
-## Notes
-
-Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
-
-## Roadmap
-
-Support for functional marker gene-based analysis
+The `taxonomy` module uses `methanohunt_db.tsv` (included).
+The `gene` module requires a database folder with:
+*   `mcrA.hmm`, `pmoA.hmm`, `mmoA.hmm`
+*   `mcrA.refpkg`, `pmoA.refpkg`, `mmoA.refpkg`
 
 ...🧙‍♂️🧬
