@@ -25,7 +25,7 @@ Use conda to install all depencies except PaPaRa which needs another step.
 ```bash
 conda env create -f methanohunt.yaml
 conda activate methanohunt
-methanohunt setup
+methanohunt setup  # to install PaPaRa
 ```
 
 ## Usage

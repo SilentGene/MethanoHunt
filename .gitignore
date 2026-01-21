@@ -6,9 +6,9 @@ dist/
 .snakemake/
 methanohunt_results/
 *.html
-*.tsv
 *.bam
 *.bai
 *.jplace
 *.sto
 *.tbl
+test/
