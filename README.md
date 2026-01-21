@@ -14,18 +14,18 @@ MethanoHunt provides two main modules:
 MethanoHunt requires:
 *   Python 3.8+
 *   Snakemake > 9.0
-*   HMMER
-*   pplacer
+*   HMMER3
+*   raxml-ng, epa-ng, gappa
 *   Minimap2, Samtools
 *   Python packages: `pandas`, `natsort`, `plotly`, `click`, `pysam`
+*   PaPaRa (install independently)
 
-### Conda Environment
-We recommend using Conda/Mamba:
+Use conda to install all depencies except PaPaRa which needs another step.
 
 ```bash
-conda env create -f environment.yaml
+conda env create -f methanohunt.yaml
 conda activate methanohunt
-pip install .
+methanohunt setup
 ```
 
 ## Usage

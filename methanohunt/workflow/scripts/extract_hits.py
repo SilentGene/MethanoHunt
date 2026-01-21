@@ -30,7 +30,7 @@ def extract_sequences(fasta_file, hits, output_file):
                 seq_id = header[1:].split()[0]
                 if seq_id in hits:
                     keep = True
-                    f_out.write(line)
+                    f_out.write(f">{seq_id}\n")
                     found += 1
                 else:
                     keep = False

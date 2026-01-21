@@ -1,34 +1,44 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "methanohunt"
 version = "0.1.0"
 description = "Summarize relative abundance of methane cyclers from taxonomic profiling or functional gene data."
 readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
 authors = [
   { name="Heyu Lin", email="heyu.lin@qut.edu.au" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
     "pandas",
     "natsort",
     "plotly",
     "click",
-    "snakemake>=9.0", 
-    "pulp<2.8" # snakemake often has specific pulp requirements or pulp conflicts, good safely. But standard snakemake usually installable.
+    "snakemake>=9.0"
 ]
-requires-python = ">=3.8"
+
+[project.urls]
+homepage = "https://github.com/SilentGene/MethanoHunt"
 
 [project.scripts]
 methanohunt = "methanohunt.cli:cli"
 
-[project.optional-dependencies]
-dev = [
-    "pytest",
-]
+[tool.hatch.build]
+packages = ["methanohunt"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["methanohunt"]
+
+[tool.hatch.build.targets.sdist]
+include = ["methanohunt", "LICENSE", "README.md"]

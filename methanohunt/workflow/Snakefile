@@ -7,7 +7,7 @@ rule all:
 
 # Include modular rules
 include: "rules/hmm.smk"
-include: "rules/pplacer.smk"
+include: "rules/epa_ng.smk"
 include: "rules/classify.smk"
 include: "rules/quant.smk"
 include: "rules/vis.smk"

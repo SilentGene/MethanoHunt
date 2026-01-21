@@ -5,14 +5,20 @@ channels:
   - defaults
 dependencies:
   - python>=3.9
+  - pip
   - snakemake>=9.0
-  - hmmer
-  - pplacer
+  - hmmer>=3.3
   - minimap2
   - samtools
-  - pandas
+  - pandas>=2.3
+  - raxml-ng
+  - epa-ng
+  - gappa
   - natsort
   - plotly
   - click
   - pysam
-  - pip
+
+  # pip entry
+  - pip:
+    - "."
