@@ -14,10 +14,12 @@ dependencies:
   - raxml-ng
   - epa-ng
   - gappa
+  - fasttree
   - natsort
   - plotly
   - click
   - pysam
+  - biopython
 
   # pip entry
   - pip:

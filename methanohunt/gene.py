@@ -1,16 +1,17 @@
 import os
 import sys
-import snakemake
-from snakemake import snakemake as run_snakemake
+import subprocess
+import yaml
+import tempfile
 import click
 
-def run_gene_pipeline(protein, nucl, reads_1, reads_2, database, output):
+def run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tree):
     """
     Wrapper to execute the Snakemake pipeline.
     """
     # 1. Resolve output directory
     if not output:
-        base_name = os.path.splitext(os.path.basename(protein))[0]
+        base_name = os.path.splitext(os.path.basename(prot))[0]
         output = f"{base_name}_methanohunt"
     
     if not os.path.exists(output):
@@ -38,10 +39,28 @@ def run_gene_pipeline(protein, nucl, reads_1, reads_2, database, output):
          sys.exit(1)
 
     # 4. Construct configuration
+    if marker:
+        # User requested markers: "Method 1: preserve user case; Method 2: force capitalize"
+        # User requested: "CLI command let user use --marker PmoA,McrA,MmoX... uppercase way"
+        # It implies user should type it that way or we enforce expected internal names.
+        # Since file system is case sensitive (or specific names used in rules), we should match what the rules expect.
+        # The rules expect: McrA, PmoA, MmoX.
+        # So we should probably capitalize them or trust user. 
+        # Safest is to Map reasonable inputs to expected outputs, or just pass as is if user follows instructions.
+        # User said "let user use... uppercase way", implies user input WILL BE uppercase.
+        # But we can be helpful and title case it or verify.
+        # Let's trust user but maybe title() if we want strictly standard behavior, but rules rely on exact match.
+        markers_list = [m.strip() for m in marker.split(",") if m.strip()]
+    else:
+        # Defaults
+        markers_list = ["McrA", "PmoA", "MmoX"]
+    
     config = {
-        "protein": os.path.abspath(protein),
+        "protein": os.path.abspath(prot),
         "database": os.path.abspath(database),
         "output_dir": os.path.abspath(output),
+        "markers": markers_list,
+        "run_tree": tree,
     }
 
     if nucl:
@@ -57,22 +76,37 @@ def run_gene_pipeline(protein, nucl, reads_1, reads_2, database, output):
     print(f"  Output: {output}")
     print(f"  Database: {database}")
 
-    # 5. Run Snakemake
-    # We use the python API
-    success = run_snakemake(
-        snakefile=snakefile_path,
-        config=config,
-        cores=4, # Default cores, maybe configurable?
-        printshellcmds=True,
-        keepgoing=True,
-        # workdir=output # Running in output dir makes relative paths simpler, but we used absolute paths above so it's fine.
-        # Actually, running in CWD is usually safer for finding package files? 
-        # But we want outputs in output_dir. 
-        # Let's keep workdir as CWD and direct all rule outputs to config['output_dir'].
-    )
+    # 5. Run Snakemake using subprocess (more robust across Snakemake versions)
+    # Create temporary config file
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as tmp_config:
+        yaml.dump(config, tmp_config)
+        tmp_config_path = tmp_config.name
+    
+    print(f"Temporary config written to: {tmp_config_path}")
 
-    if not success:
+    cmd = [
+        "snakemake",
+        "-s", snakefile_path,
+        "--configfile", tmp_config_path,
+        "--cores", "4",
+        "--printshellcmds",
+        "--keep-going"
+    ]
+    
+    # Run in the output directory if desired, or simpler: run from here but output is absolute
+    # Since config paths are absolute, running from CWD is fine.
+    
+    try:
+        print("Running Snakemake command:", " ".join(cmd))
+        subprocess.run(cmd, check=True)
+        click.echo("Pipeline completed successfully.")
+    except subprocess.CalledProcessError:
         click.echo("Error: Snakemake pipeline failed.", err=True)
         sys.exit(1)
-    else:
-        click.echo("Pipeline completed successfully.")
+    except FileNotFoundError:
+        click.echo("Error: 'snakemake' command not found. Please ensure Snakemake is installed and in your PATH.", err=True)
+        sys.exit(1)
+    finally:
+        # Cleanup temp config
+        if os.path.exists(tmp_config_path):
+             os.remove(tmp_config_path)

@@ -147,14 +147,14 @@ def compute_abundances(db, tax_files):
     return results[base_cols + valid_samples]
 
 
-def generate_stacked_bar_chart(result, output_file):
+def generate_stacked_bar_chart(result, output_prefix):
     """
     Generate an interactive grouped stacked bar chart using Plotly.
     X-axis: sample names (grouped by Classification)
     Y-axis: relative abundance (%)
     Stacked bars: colored by keyword (GTDB_taxonomy)
     
-    Saves both HTML and JPG versions.
+    Saves HTML version using the provided prefix.
     """
     if "Classification" not in result.columns:
         print("Warning: 'Classification' column not found. Skipping chart generation.")
@@ -280,7 +280,7 @@ def generate_stacked_bar_chart(result, output_file):
         figs.append((classification, fig_c))
 
     # Save HTML with all figures stacked
-    html_file = output_file.replace(".tsv", "") + ".html"
+    html_file = f"{output_prefix}.html"
     html_parts = []
     for idx, (_, fig_c) in enumerate(figs):
         include_js = "cdn" if idx == 0 else False
@@ -307,16 +307,16 @@ def generate_stacked_bar_chart(result, output_file):
     print(f"Saved interactive chart to {html_file}")
 
 
-def run_taxonomy(input_patterns, database_path, output_file):
+def run_taxonomy(input_patterns, database_path, output_prefix):
     """
     Main entry point for taxonomy analysis.
     """
     if not database_path:
         # Fallback to default in package
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        # database is now in methanohunt/database/methanohunt_db.tsv
+        # database is now in methanohunt/database/methanohunt_taxonomy_db.tsv
         # This file is in methanohunt/taxonomy.py
-        database_path = os.path.join(current_dir, "database", "methanohunt_db.tsv")
+        database_path = os.path.join(current_dir, "database", "methanohunt_taxonomy_db.tsv")
     
     if not os.path.exists(database_path):
         raise FileNotFoundError(f"Database file not found at {database_path}")
@@ -330,7 +330,10 @@ def run_taxonomy(input_patterns, database_path, output_file):
         return
 
     result = compute_abundances(db, tax_files)
-    result.to_csv(output_file, sep="\t", index=False)
-    print(f"Saved relative abundance results to {output_file}")
+
     
-    generate_stacked_bar_chart(result, output_file)
+    tsv_file = f"{output_prefix}.tsv"
+    result.to_csv(tsv_file, sep="\t", index=False)
+    print(f"Saved relative abundance results to {tsv_file}")
+    
+    generate_stacked_bar_chart(result, output_prefix)

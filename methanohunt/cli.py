@@ -14,36 +14,47 @@ def cli():
     pass
 
 @cli.command()
-@click.option("-i", "--input", "input_files", multiple=True, required=True, help="Input tax.tsv files (supports glob patterns)")
+@click.option("-i", "--input", "input_files", multiple=True, required=False, help="Input tax.tsv files (supports glob patterns)")
 @click.option("-db", "--database", default=None, help="Path to MethanoHunt database file")
-@click.option("-o", "--output", required=True, help="Output TSV file path")
-def taxonomy(input_files, database, output):
-    """Run taxonomy-based profiling."""
+@click.option("-o", "--output", required=True, help="Output file prefix (will generate .tsv and .html)")
+@click.argument("extra_files", nargs=-1)
+def taxonomy(input_files, database, output, extra_files):
+    """Run taxonomy-based profiling.
+    
+    Accepts input files via -i/--input or as positional arguments (e.g. *.tsv).
+    """
     try:
-        # Click handles multiple inputs as tuple of strings.
+        # Combine inputs from flag and positional args
+        all_inputs = list(input_files) + list(extra_files)
+        
+        if not all_inputs:
+             raise click.UsageError("No input files provided. Use -i or positional arguments.")
+
         # run_taxonomy expects list of patterns or files.
-        run_taxonomy(list(input_files), database, output)
+        run_taxonomy(all_inputs, database, output)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
 
 
 @cli.command()
-@click.option("--protein", required=True, help="Input protein FASTA file (.faa)")
+@click.option("--prot", required=True, help="Input protein FASTA file (.faa)")
 @click.option("--nucl", default=None, help="Input gene nucleotide FASTA file (.ffn, .fna)")
 @click.option("-1", "reads_1", default=None, help="Forward reads (FASTQ)")
 @click.option("-2", "reads_2", default=None, help="Reverse reads (FASTQ)")
 @click.option("-db", "--database", default=None, help="Path to database folder")
 @click.option("-o", "--output", default=None, help="Output directory path")
-def gene(protein, nucl, reads_1, reads_2, database, output):
+@click.option("--marker", default=None, help="Comma-separated list of markers (e.g. McrA,PmoA). Default: all")
+@click.option("--tree", is_flag=True, default=False, help="Generate phylogenetic tree using FastTree")
+def gene(prot, nucl, reads_1, reads_2, database, output, marker, tree):
     """Run functional gene-based profiling pipeline."""
     # Logic to be implemented.
     # We will likely import and call a function from methanohunt.gene here.
-    click.echo(f"Running gene pipeline for {protein}...")
+    click.echo(f"Running gene pipeline for {prot}...")
     
     # Placeholder for logic
     from .gene import run_gene_pipeline
-    run_gene_pipeline(protein, nucl, reads_1, reads_2, database, output)
+    run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tree)
 
 
 @cli.command()

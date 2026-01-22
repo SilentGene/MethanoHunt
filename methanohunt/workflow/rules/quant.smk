@@ -4,7 +4,7 @@
 if config.get("nucl") and config.get("reads_1"):
     rule calculate_abundance:
         input:
-            classification = f"{config['output_dir']}/classification.tsv",
+            classification = f"{config['output_dir']}/methanohunt_gene_classification.tsv",
             gene_nucl = config["nucl"],
             reads_1 = config["reads_1"],
             reads_2 = config.get("reads_2", "") # Handle single end if needed? Logic below assumes PE
