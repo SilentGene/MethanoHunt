@@ -1,48 +1,82 @@
-import sys
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import plotly.io as pio
 
-# Snakemake script
-# input: data (abundance or classification)
-# output: html
+def plot_rpkg_distribution(class_file, subtype_file, output_html):
+    figs = []
 
-def visualize(input_file, output_file):
-    try:
-        df = pd.read_csv(input_file, sep="\t")
-    except Exception:
-        # Create empty HTML if file load fails
-        with open(output_file, "w") as f:
-            f.write("<html><body><h2>No data available for visualization.</h2></body></html>")
-        return
+    # Helper function to create a figure
+    def create_fig(input_file, title):
+        try:
+            df = pd.read_csv(input_file, sep='\t', index_col='Sample')
+        except:
+             return None
+             
+        if df.empty:
+            return None
+        
+        # Structure: Rows=Sample, Cols=Categories.
+        # Plotly goes by traces (categories).
+        
+        fig = go.Figure()
+        
+        # Get categories (columns)
+        categories = df.columns.tolist()
+        
+        for cat in categories:
+            fig.add_trace(go.Bar(
+                name=cat,
+                x=df.index,
+                y=df[cat],
+                hovertemplate=f"<b>Sample:</b> %{{x}}<br><b>{title}:</b> {cat}<br><b>RPKG:</b> %{{y:.4f}}<extra></extra>"
+            ))
+            
+        fig.update_layout(
+            title=f"RPKG Distribution by {title}",
+            barmode='stack',
+            xaxis_title="Sample",
+            yaxis_title="RPKG",
+            legend_title=title,
+            hovermode="closest",
+            height=700
+        )
+        return fig
 
-    if df.empty:
-        with open(output_file, "w") as f:
-            f.write("<html><body><h2>No data found.</h2></body></html>")
-        return
-
-    # Determine plot type based on columns
-    # Abundance: [Classification, TPM, Sample]
-    # Classification only: [gene_id, marker, classification]
+    # Create charts
+    fig_class = create_fig(class_file, "Classification")
+    if fig_class: figs.append(fig_class)
     
-    if "TPM" in df.columns:
-        # Bar chart of TPM by Classification
-        fig = px.bar(df, x="Classification", y="TPM", color="Classification", 
-                     title="Relative Abundance (TPM) of Methane Cyclers")
-    elif "classification" in df.columns:
-        # Count chart
-        counts = df["classification"].value_counts().reset_index()
-        counts.columns = ["Classification", "Count"]
-        fig = px.bar(counts, x="Classification", y="Count", color="Classification",
-                     title="Count of Detected Methane Cycler Genes")
-    else:
-        # Generic fallback
-        fig = px.bar(title="Unknown Data Format")
-
-    fig.update_layout(height=600)
+    fig_subtype = create_fig(subtype_file, "Subtype")
+    if fig_subtype: figs.append(fig_subtype)
     
-    # Save HTML
-    pio.write_html(fig, file=output_file, auto_open=False)
+    # Save to HTML
+    with open(output_html, 'w', encoding="utf-8") as f:
+        f.write("<html><head><meta charset='utf-8'><title>MethanoHunt Report</title></head><body>\n")
+        f.write("<h1 style='font-family: Arial, sans-serif; text-align: left;'>MethanoHunt Gene Profiling Report</h1>\n")
+        f.write("<p style='font-family: Arial, sans-serif; font-size: 14px;'>This report displays the RPKG (Reads Per Kilobase per Genome equivalent) abundance of different functional gene categories.</p>\n")
+        
+        if not figs:
+            f.write("<p>No data available for visualization.</p>")
+        else:
+            for i, fig in enumerate(figs):
+                include_js = "cdn" if i == 0 else False
+                f.write(pio.to_html(fig, include_plotlyjs=include_js, full_html=False))
+                f.write("<br>")
+        
+        footnote = (
+            "<div style='margin: 30px 10px 20px 10px; padding-top: 10px; border-top: 1px solid #ccc; "
+            "font-family: Arial, sans-serif; font-size: 0.9em; color: #666; font-style: italic;'>"
+            "<br>"
+            "<a href='https://github.com/SilentGene/MethanoHunt' style='color: #666; text-decoration: none;'>&copy; 2025 Heyu Lin MethanoHunt</a>"
+            "</div>"
+        )
+        f.write(footnote)
+        
+        f.write("</body></html>")
 
 if __name__ == "__main__":
-    visualize(snakemake.input.data, snakemake.output.html)
+    class_tsv = snakemake.input.class_tsv
+    subtype_tsv = snakemake.input.subtype_tsv
+    html_out = snakemake.output.html
+    
+    plot_rpkg_distribution(class_tsv, subtype_tsv, html_out)

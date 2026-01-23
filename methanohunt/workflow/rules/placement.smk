@@ -44,7 +44,7 @@ rule epa_place:
         jplace = f"{config['output_dir']}/placement/{{marker}}/epa_result.jplace"
     params:
         outdir = f"{config['output_dir']}/placement/{{marker}}"
-    threads: config.get("threads", 8)
+    threads: 4
     shell:
         """
         mkdir -p {params.outdir}

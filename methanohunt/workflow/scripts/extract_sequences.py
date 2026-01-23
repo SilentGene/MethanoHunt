@@ -10,7 +10,7 @@ def extract_sequences(classification_file, protein_file, output_files):
     # The user request clarified that column 'classification' is used for filtering.
     # And 'name' column for ID matching.
     
-    if 'classification' not in df.columns or 'name' not in df.columns:
+    if 'subtype' not in df.columns or 'name' not in df.columns:
         # Fallback or error? Assuming structure is correct per previous steps.
         # If empty or not fully formed, we might just return empty files.
         pass
@@ -22,20 +22,23 @@ def extract_sequences(classification_file, protein_file, output_files):
     ids_mmox = {}
 
     for _, row in df.iterrows():
-        classification = str(row.get('classification', ''))
+        # User requested to rename original 'classification' to 'subtype' and put original values there.
+        # New 'classification' column has broader categories like 'McrA (methanogen)'.
+        # Our filtering logic relies on "Methanogen...", "ANME..." which are in 'subtype' now.
+        subtype = str(row.get('subtype', ''))
         seq_id = str(row.get('name', ''))
         
-        if not classification or not seq_id:
+        if not subtype or not seq_id:
             continue
 
-        if classification.startswith('Methanogen'):
-            ids_methanogen[seq_id] = classification
-        elif classification.startswith('ANME'):
-            ids_anme[seq_id] = classification
-        elif classification.startswith('PmoA'):
-            ids_pmoa[seq_id] = classification
-        elif classification.startswith('MmoX'):
-            ids_mmox[seq_id] = classification
+        if subtype.startswith('Methanogen'):
+            ids_methanogen[seq_id] = subtype
+        elif subtype.startswith('ANME'):
+            ids_anme[seq_id] = subtype
+        elif subtype.startswith('PmoA'):
+            ids_pmoa[seq_id] = subtype
+        elif subtype.startswith('MmoX'):
+            ids_mmox[seq_id] = subtype
 
     # Open output files
     handle_methanogen = open(output_files['mcrA_methanogen'], 'w')

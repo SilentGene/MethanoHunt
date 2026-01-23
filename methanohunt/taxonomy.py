@@ -287,7 +287,7 @@ def generate_stacked_bar_chart(result, output_prefix):
         html_parts.append(pio.to_html(fig_c, include_plotlyjs=include_js, full_html=False))
     html_content = "\n".join(html_parts)
     with open(html_file, "w", encoding="utf-8") as f:
-        overall_title = "Relative Abundance of Methane Cyclers"
+        overall_title = "MethanoHunt Taxonomic Profiling Report"
         f.write("<html><head><meta charset='utf-8'></head><body>\n")
         f.write(f"<h2 style='margin:10px 0 20px 0; font-family:Arial, sans-serif;'>{overall_title}</h2>\n")
         f.write(html_content)
@@ -299,7 +299,7 @@ def generate_stacked_bar_chart(result, output_prefix):
             "as specific subgroups within a lineage may lack the predicted metabolic potential. "
             "Verification via functional gene analysis is recommended."
             "<br><br>"
-            "&copy; 2025 Heyu Lin"
+            "<a href='https://github.com/SilentGene/MethanoHunt' style='color: #666; text-decoration: none;'>&copy; 2025 Heyu Lin MethanoHunt</a>"
             "</div>"
         )
         f.write(footnote)
@@ -307,7 +307,7 @@ def generate_stacked_bar_chart(result, output_prefix):
     print(f"Saved interactive chart to {html_file}")
 
 
-def run_taxonomy(input_patterns, database_path, output_prefix):
+def run_taxonomy(input_patterns, database_path, output_dir):
     """
     Main entry point for taxonomy analysis.
     """
@@ -320,6 +320,11 @@ def run_taxonomy(input_patterns, database_path, output_prefix):
     
     if not os.path.exists(database_path):
         raise FileNotFoundError(f"Database file not found at {database_path}")
+
+    # Ensure output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"Created output directory: {output_dir}")
         
     db = load_database(database_path)
     tax_files = load_singlem_files(input_patterns)
@@ -331,8 +336,10 @@ def run_taxonomy(input_patterns, database_path, output_prefix):
 
     result = compute_abundances(db, tax_files)
 
-    
+    # Define output paths with fixed names inside the output directory
+    output_prefix = os.path.join(output_dir, "methanohunt_taxonomy")
     tsv_file = f"{output_prefix}.tsv"
+    
     result.to_csv(tsv_file, sep="\t", index=False)
     print(f"Saved relative abundance results to {tsv_file}")
     

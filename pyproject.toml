@@ -25,7 +25,8 @@ dependencies = [
     "natsort",
     "plotly",
     "click",
-    "snakemake>=9.0"
+    "snakemake>=9.0",
+    "MicrobeCensus-SourceApp"
 ]
 
 [project.urls]

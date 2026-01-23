@@ -14,8 +14,13 @@ targets.extend([
     f"{config['output_dir']}/classified_sequences/MmoX.faa"
 ])
 
-if config.get("nucl") and config.get("reads_1"):
-    targets.append(f"{config['output_dir']}/MethanoHunt_report.html")
+if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
+    targets.extend([
+        f"{config['output_dir']}/RPKG/RPKG_combined.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_classification.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_subtype.tsv",
+        f"{config['output_dir']}/MethanoHunt_report.html"
+    ])
 
 if config.get("run_tree"):
     targets.extend(expand(f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk", marker=MARKERS))

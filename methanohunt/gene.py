@@ -5,7 +5,9 @@ import yaml
 import tempfile
 import click
 
-def run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tree):
+import glob
+
+def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, threads=4):
     """
     Wrapper to execute the Snakemake pipeline.
     """
@@ -40,16 +42,6 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tr
 
     # 4. Construct configuration
     if marker:
-        # User requested markers: "Method 1: preserve user case; Method 2: force capitalize"
-        # User requested: "CLI command let user use --marker PmoA,McrA,MmoX... uppercase way"
-        # It implies user should type it that way or we enforce expected internal names.
-        # Since file system is case sensitive (or specific names used in rules), we should match what the rules expect.
-        # The rules expect: McrA, PmoA, MmoX.
-        # So we should probably capitalize them or trust user. 
-        # Safest is to Map reasonable inputs to expected outputs, or just pass as is if user follows instructions.
-        # User said "let user use... uppercase way", implies user input WILL BE uppercase.
-        # But we can be helpful and title case it or verify.
-        # Let's trust user but maybe title() if we want strictly standard behavior, but rules rely on exact match.
         markers_list = [m.strip() for m in marker.split(",") if m.strip()]
     else:
         # Defaults
@@ -61,20 +53,80 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tr
         "output_dir": os.path.abspath(output),
         "markers": markers_list,
         "run_tree": tree,
+        "threads": threads,
+        "mapper": mapper
     }
 
     if nucl:
         config["nucl"] = os.path.abspath(nucl)
-    if reads_1:
-         config["reads_1"] = os.path.abspath(reads_1)
-    if reads_2:
-         config["reads_2"] = os.path.abspath(reads_2)
+    
+    # Process reads if provided
+    samples = {}
+    if reads_1 and reads_2:
+        # Helper to process read inputs (string or list -> list of files)
+        def process_read_arg(arg):
+            files = []
+            
+            # Normalize to list
+            if isinstance(arg, str):
+                parts = arg.split()
+            elif isinstance(arg, list):
+                # If list, flatten it (in case some elements are space-separated strings?)
+                # Usually list of filenames unless user passed quoted string in list
+                parts = []
+                for item in arg:
+                    parts.extend(item.split())
+            else:
+                return []
 
+            for part in parts:
+                # Expand glob (handle both glob pattern and literal filename)
+                expanded = glob.glob(part)
+                if expanded:
+                    files.extend(sorted(expanded))
+                else:
+                    files.append(part)
+            return files
+
+        r1_files = process_read_arg(reads_1)
+        r2_files = process_read_arg(reads_2)
+
+        if len(r1_files) != len(r2_files):
+             click.echo(f"Error: Number of forward reads ({len(r1_files)}) does not match reverse reads ({len(r2_files)})", err=True)
+             sys.exit(1)
+        
+        if not r1_files:
+             click.echo(f"Error: No read files found matching input.", err=True)
+             sys.exit(1)
+
+        # Pair them up and infer sample names
+        # Logic: -1后的第一输入和-2后的第一个输入是一对
+        for r1, r2 in zip(r1_files, r2_files):
+            # Infer sample name from r1
+            basename = os.path.basename(r1)
+            # Try removing suffixes
+            suffixes = [".1.fq.gz", "_1.fq.gz", ".1.fastq.gz", "_1.fastq.gz", 
+                        ".1.fq", "_1.fq", ".1.fastq", "_1.fastq"]
+            sample_name = basename
+            for suf in suffixes:
+                if basename.endswith(suf):
+                    sample_name = basename[:-len(suf)]
+                    break
+            
+            samples[sample_name] = {
+                "r1": os.path.abspath(r1),
+                "r2": os.path.abspath(r2)
+            }
+        
+    config["samples"] = samples
 
     print(f"Starting MethanoHunt Gene Pipeline...")
     print(f"  Snakemake: {snakefile_path}")
     print(f"  Output: {output}")
     print(f"  Database: {database}")
+    print(f"  Threads: {threads}")
+    if samples:
+        print(f"  Samples: {len(samples)} pairs detected.")
 
     # 5. Run Snakemake using subprocess (more robust across Snakemake versions)
     # Create temporary config file
@@ -88,7 +140,7 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tr
         "snakemake",
         "-s", snakefile_path,
         "--configfile", tmp_config_path,
-        "--cores", "4",
+        "--cores", str(threads),
         "--printshellcmds",
         "--keep-going"
     ]

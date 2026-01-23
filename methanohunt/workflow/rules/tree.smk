@@ -16,7 +16,7 @@ rule fasttree_build:
         combined = f"{config['output_dir']}/tree/{{marker}}_combined.fasta"
     output:
         tree = f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk"
-    threads: config.get("threads", 4)
+    threads: 4
     shell:
         """
         FastTree -lg < {input.combined} > {output.tree}

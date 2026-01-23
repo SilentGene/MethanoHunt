@@ -16,7 +16,7 @@ def cli():
 @cli.command()
 @click.option("-i", "--input", "input_files", multiple=True, required=False, help="Input tax.tsv files (supports glob patterns)")
 @click.option("-db", "--database", default=None, help="Path to MethanoHunt database file")
-@click.option("-o", "--output", required=True, help="Output file prefix (will generate .tsv and .html)")
+@click.option("-o", "--output", required=True, help="Output directory path (will be created if not exists)")
 @click.argument("extra_files", nargs=-1)
 def taxonomy(input_files, database, output, extra_files):
     """Run taxonomy-based profiling.
@@ -37,24 +37,82 @@ def taxonomy(input_files, database, output, extra_files):
         sys.exit(1)
 
 
-@cli.command()
+def parse_greedy_args(args, flags):
+    """
+    Greedily collect arguments following specific flags until the next flag.
+    Handles multiple occurrences by concatenating lists? 
+    Or assuming single occurrence for now as per simple glob expansion.
+    """
+    values = []
+    parsing = False
+    for arg in args:
+        if arg in flags:
+            parsing = True
+            continue
+        if parsing:
+            if arg.startswith('-') and len(arg) > 1:
+                # Stop if we hit another flag (heuristic: starts with -, not just -)
+                # But allow negative numbers? For filenames, usually safe.
+                # Assuming typical flag usage.
+                parsing = False
+                # Don't break, might be another flag we care about later?
+                # Actually, if we see another flag, we stop parsing FOR THIS flag.
+                # If we see the SAME flag again?
+                # Let's simple scan:
+                # Find flag index, take next args until next flag.
+            else:
+                values.append(arg)
+    
+    # Re-implemented to handle "find flag, take validation"
+    collected = []
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in flags:
+            i += 1
+            while i < len(args):
+                val = args[i]
+                if val.startswith('-') and len(val) > 1:
+                    # Found next flag
+                    break
+                collected.append(val)
+                i += 1
+        else:
+            i += 1
+    return collected
+
+@cli.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.option("--prot", required=True, help="Input protein FASTA file (.faa)")
 @click.option("--nucl", default=None, help="Input gene nucleotide FASTA file (.ffn, .fna)")
-@click.option("-1", "reads_1", default=None, help="Forward reads (FASTQ)")
-@click.option("-2", "reads_2", default=None, help="Reverse reads (FASTQ)")
+@click.option("-1", "reads_1", default=None, help="Forward reads (FASTQ). List or glob pattern.")
+@click.option("-2", "reads_2", default=None, help="Reverse reads (FASTQ). List or glob pattern.")
+@click.option("--mapper", type=click.Choice(['minimap2', 'bwa']), default='minimap2', help="Mapper to use (minimap2 or bwa)")
 @click.option("-db", "--database", default=None, help="Path to database folder")
 @click.option("-o", "--output", default=None, help="Output directory path")
 @click.option("--marker", default=None, help="Comma-separated list of markers (e.g. McrA,PmoA). Default: all")
 @click.option("--tree", is_flag=True, default=False, help="Generate phylogenetic tree using FastTree")
-def gene(prot, nucl, reads_1, reads_2, database, output, marker, tree):
+@click.option("-t", "--threads", default=4, help="Number of threads to use (default: 4)")
+def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, threads):
     """Run functional gene-based profiling pipeline."""
-    # Logic to be implemented.
-    # We will likely import and call a function from methanohunt.gene here.
+    
+    # Parse greedy arguments overrides
+    # We inspect sys.argv to find the actual lists for -1 and -2
+    # Be careful to exclude the command itself 'gene'
+    r1_list = parse_greedy_args(sys.argv, ['-1', '--reads_1'])
+    r2_list = parse_greedy_args(sys.argv, ['-2', '--reads_2'])
+
+    # If greedy parsing found nothing, fall back to Click's value (which might be just the first file)
+    # But wait, if Click parsed "-1 a b", it assigned "a" to reads_1 and "b" to extra_args (if allowed).
+    # If we use greedy parsing, we get "a", "b".
+    # So if list is not empty, use it.
+    
+    final_reads_1 = r1_list if r1_list else ([reads_1] if reads_1 else None)
+    final_reads_2 = r2_list if r2_list else ([reads_2] if reads_2 else None)
+    
     click.echo(f"Running gene pipeline for {prot}...")
     
-    # Placeholder for logic
     from .gene import run_gene_pipeline
-    run_gene_pipeline(prot, nucl, reads_1, reads_2, database, output, marker, tree)
+    run_gene_pipeline(prot, nucl, final_reads_1, final_reads_2, mapper, database, output, marker, tree, threads)
 
 
 @cli.command()
