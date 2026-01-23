@@ -126,16 +126,28 @@ methanohunt gene \
 ## Output
 
 ### Gene Module Output
+
+**Important results:**
+
 *   `methanohunt_gene_classification.tsv`: Detected genes and their functional classification.
-*   `RPKG/`: RPKG abundance tables (classified, subtype, combined).
 *   `MethanoHunt_report.html`: Abundance visualization (RPKG based).
+*   `RPKG/`: RPKG abundance tables (classified, subtype, combined).
+*   `classified_sequences/`: Detected sequences and their functional classification in fasta format.
+*   `tree/`: Phylogenetic trees of detected sequences (if --tree is specified).
+
+**Other results:**
+
 *   `bam/`: Mapping results and reference.
 *   `microbecensus/`: Genome equivalent estimation results.
-*   `hmm/`, `hits/`, `placement/`, `classification/`, `tree/`: Intermediate results.
+*   `hmm/`, `hits/`, `placement/`, `classification/`, Intermediate results.
 
 ## Database
 
 The required database files for both taxonomy and gene modules are included in the package.
+
+# Future plan 
+
+- A `genome` module that can detect methane cyclers from genomes/metagenome-assembled genomes and estimate their relative abundance.
 
 
 ...🧙‍♂️🧬
