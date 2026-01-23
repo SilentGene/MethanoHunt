@@ -6,7 +6,7 @@ rule extract_dna_ref:
         classification = f"{config['output_dir']}/methanohunt_gene_classification.tsv",
         nucl = config["nucl"] if config.get("nucl") else []
     output:
-        ref = f"{config['output_dir']}/bam/mapping_reference.fna"
+        ref = f"{config['output_dir']}/mapping_reference.fna"
     script:
         "../scripts/extract_dna.py"
 

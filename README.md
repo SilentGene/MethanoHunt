@@ -153,7 +153,7 @@ The required database files for both taxonomy and gene modules are included in t
 
 # Future plan 
 
-- A `genome` module that can detect methane cyclers from genomes/metagenome-assembled genomes and estimate their relative abundance.
+- A `genome` module that can detect methane cyclers from genomes/metagenome-assembled genomes, predict their substrates, and estimate their relative abundance.
 
 
 ...🧙‍♂️🧬

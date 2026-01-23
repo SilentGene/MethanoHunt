@@ -2,10 +2,13 @@ import os
 import sys
 import subprocess
 import yaml
-import tempfile
 import click
 
 import glob
+import re
+
+def strip_non_alnum_ends(s: str) -> str:
+    return re.sub(r'^[^A-Za-z0-9]+|[^A-Za-z0-9]+$', '', s)
 
 def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, threads=4):
     """
@@ -62,7 +65,7 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
     
     # Process reads if provided
     samples = {}
-    if reads_1 and reads_2:
+    if reads_1:
         # Helper to process read inputs (string or list -> list of files)
         def process_read_arg(arg):
             files = []
@@ -89,29 +92,46 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
             return files
 
         r1_files = process_read_arg(reads_1)
-        r2_files = process_read_arg(reads_2)
 
-        if len(r1_files) != len(r2_files):
-             click.echo(f"Error: Number of forward reads ({len(r1_files)}) does not match reverse reads ({len(r2_files)})", err=True)
+        if not r1_files:
+             click.echo(f"Error: No forward read files found matching input.", err=True)
              sys.exit(1)
         
-        if not r1_files:
-             click.echo(f"Error: No read files found matching input.", err=True)
-             sys.exit(1)
+        # Enforce suffix rule
+        valid_suffixes = ["1.fq.gz", "1.fastq.gz", "1.fq", "1.fastq"]
+        detected_suffix = None
+        
+        for r1 in r1_files:
+            basename = os.path.basename(r1)
+            found = False
+            for suf in valid_suffixes:
+                if basename.endswith(suf):
+                    if detected_suffix is None:
+                        detected_suffix = suf
+                    elif detected_suffix != suf:
+                        click.echo(f"Error: All forward reads must have the same suffix. Found both '{detected_suffix}' and '{suf}'.", err=True)
+                        sys.exit(1)
+                    found = True
+                    break
+            if not found:
+                click.echo(f"Error: Forward read '{r1}' does not end with any of {valid_suffixes}. Please rename your files to end with one of these suffixes.", err=True)
+                sys.exit(1)
 
         # Pair them up and infer sample names
-        # Logic: -1后的第一输入和-2后的第一个输入是一对
-        for r1, r2 in zip(r1_files, r2_files):
-            # Infer sample name from r1
+        for r1 in r1_files:
             basename = os.path.basename(r1)
-            # Try removing suffixes
-            suffixes = [".1.fq.gz", "_1.fq.gz", ".1.fastq.gz", "_1.fastq.gz", 
-                        ".1.fq", "_1.fq", ".1.fastq", "_1.fastq"]
-            sample_name = basename
-            for suf in suffixes:
-                if basename.endswith(suf):
-                    sample_name = basename[:-len(suf)]
-                    break
+            sample_prefix = basename[:-len(detected_suffix)]
+            sample_name = strip_non_alnum_ends(sample_prefix)
+            
+            # Derive r2
+            # e.g. sample1.1.fq.gz -> sample_prefix="sample1.", suffix="1.fq.gz"
+            # r2 = "sample1." + "2" + ".fq.gz" = "sample1.2.fq.gz"
+            r2_basename = sample_prefix + "2" + detected_suffix[1:]
+            r2 = os.path.join(os.path.dirname(r1), r2_basename)
+            
+            if not os.path.exists(r2):
+                click.echo(f"Error: Reverse read file '{r2}' not found (derived from '{r1}').", err=True)
+                sys.exit(1)
             
             samples[sample_name] = {
                 "r1": os.path.abspath(r1),
@@ -127,19 +147,23 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
     print(f"  Threads: {threads}")
     if samples:
         print(f"  Samples: {len(samples)} pairs detected.")
+        for name, data in samples.items():
+            print(f"    - {name}:")
+            print(f"      R1: {data['r1']}")
+            print(f"      R2: {data['r2']}")
 
     # 5. Run Snakemake using subprocess (more robust across Snakemake versions)
-    # Create temporary config file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as tmp_config:
-        yaml.dump(config, tmp_config)
-        tmp_config_path = tmp_config.name
+    # Create config file in output directory
+    config_path = os.path.join(output, "methanohunt_config.yaml")
+    with open(config_path, 'w') as f:
+        yaml.dump(config, f)
     
-    print(f"Temporary config written to: {tmp_config_path}")
+    print(f"Configuration written to: {config_path}")
 
     cmd = [
         "snakemake",
         "-s", snakefile_path,
-        "--configfile", tmp_config_path,
+        "--configfile", config_path,
         "--cores", str(threads),
         "--printshellcmds",
         "--keep-going"
@@ -159,6 +183,4 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
         click.echo("Error: 'snakemake' command not found. Please ensure Snakemake is installed and in your PATH.", err=True)
         sys.exit(1)
     finally:
-        # Cleanup temp config
-        if os.path.exists(tmp_config_path):
-             os.remove(tmp_config_path)
+        pass
