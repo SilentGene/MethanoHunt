@@ -1,0 +1,26 @@
+name: methanohunt
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.9
+  - pip
+  - snakemake>=9.0
+  - hmmer>=3.3
+  - minimap2
+  - samtools
+  - pandas>=2.3
+  - raxml-ng
+  - epa-ng
+  - gappa
+  - fasttree
+  - natsort
+  - plotly
+  - click
+  - pysam
+  - biopython
+
+  # pip entry
+  - pip:
+    - "."

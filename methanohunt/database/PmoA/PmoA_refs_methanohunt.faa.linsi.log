@@ -1,0 +1,371 @@
+IQ-TREE multicore version 2.2.5 COVID-edition for Linux 64-bit built Sep 15 2023
+Developed by Bui Quang Minh, James Barbetti, Nguyen Lam Tung,
+Olga Chernomor, Heiko Schmidt, Dominik Schrempf, Michael Woodhams, Ly Trong Nhan.
+
+Host:    cpu1n024 (AVX512, FMA3, 1511 GB RAM)
+Command: iqtree -s pmoA_refs_methanohunt.faa.linsi -B 1000 -T AUTO --threads-max 16 --mset LG
+Seed:    310612 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Thu Jan 22 09:55:31 2026
+Kernel:  AVX+FMA - auto-detect threads (16 CPU cores detected)
+
+Reading alignment file pmoA_refs_methanohunt.faa.linsi ... Fasta format detected
+Reading fasta file: done in 0.000719753 secs using 33.48% CPU
+Alignment most likely contains protein sequences
+Constructing alignment: done in 0.000820203 secs using 1080% CPU
+Alignment has 79 sequences with 433 columns, 411 distinct patterns
+294 parsimony-informative, 70 singleton sites, 69 constant sites
+         Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 0.0108849 secs using 1375% CPU
+   1  cummo1    41.34%    passed     95.04%
+   2  cummo2    41.34%    passed     94.08%
+   3  cummo3    42.49%    passed     21.80%
+   4  cummo4    38.57%    passed     76.78%
+   5  cummo5    43.42%    passed     73.44%
+   6  cummo6    42.49%    passed      9.56%
+   7  cummo7    43.42%    passed     80.64%
+   8  cummo8    42.49%    passed     76.55%
+   9  cummo9    41.80%    passed     97.09%
+  10  cummo11   42.26%    passed     98.99%
+  11  cummo12   42.96%    passed     99.83%
+  12  cummo15   36.72%    passed     87.87%
+  13  cummo16   40.88%    passed     88.98%
+  14  cummo17   41.80%    passed     98.87%
+  15  cummo21   41.80%    passed     99.28%
+  16  cummo22   40.88%    passed     97.45%
+  17  cummo24   42.96%    passed     99.97%
+  18  cummo25   42.26%    passed     84.17%
+  19  cummo26   42.96%    passed     88.60%
+  20  cummo28   42.26%    passed     91.32%
+  21  cummo29   42.96%    passed     99.94%
+  22  cummo30   41.80%    passed     99.57%
+  23  cummo32   42.49%    passed     15.24%
+  24  cummo34   38.57%    passed     62.19%
+  25  cummo35   42.26%    passed     86.22%
+  26  cummo36   42.49%    passed     99.99%
+  27  cummo37   43.88%    passed     84.85%
+  28  cummo38   50.12%    passed     78.74%
+  29  cummo39   50.12%    passed     67.14%
+  30  cummo40   50.12%    passed     74.85%
+  31  cummo41   50.12%    passed     58.87%
+  32  cummo42   50.12%    passed     39.60%
+  33  cummo43   42.96%    passed     83.19%
+  34  cummo44   50.12%    passed     56.12%
+  35  cummo45   42.96%    passed     98.86%
+  36  cummo46   42.96%    passed     55.75%
+  37  cummo47   42.49%    passed     99.96%
+  38  cummo48   50.12%    passed     56.82%
+  39  cummo49   50.12%    passed     49.46%
+  40  cummo50   42.26%    passed     85.54%
+  41  cummo51   42.96%    passed     99.97%
+  42  cummo52   42.96%    passed     99.80%
+  43  cummo53   32.33%    passed     60.79%
+  44  cummo54   50.12%    passed     50.87%
+  45  cummo55   42.49%    passed     99.93%
+  46  cummo56   32.10%    passed     96.11%
+  47  cummo57   50.12%    passed     48.96%
+  48  cummo59   37.41%    passed     86.74%
+  49  cummo60   50.12%    passed     52.05%
+  50  cummo61   50.12%    passed     69.56%
+  51  cummo62   42.96%    passed     99.92%
+  52  cummo63   35.10%    passed     55.86%
+  53  cummo64   42.49%    passed     98.95%
+  54  cummo65   50.12%    passed     53.70%
+  55  cummo66   42.96%    passed     90.09%
+  56  cummo67   36.95%    passed     87.45%
+  57  cummo68   33.03%    passed     85.83%
+  58  cummo69   44.80%    passed     21.36%
+  59  cummo70   50.12%    passed     48.25%
+  60  cummo71   50.12%    passed     45.63%
+  61  cummo72   49.88%    passed     57.02%
+  62  cummo73   41.34%    passed     98.08%
+  63  cummo74   40.65%    passed     40.36%
+  64  cummo75   39.49%    failed      0.70%
+  65  cummo76   39.95%    failed      4.15%
+  66  cummo77   41.80%    failed      4.03%
+  67  cummo78   42.03%    passed     26.22%
+  68  cummo79   33.95%    failed      1.31%
+  69  cummo80   41.80%    failed      2.00%
+  70  cummo81   41.11%    failed      1.46%
+  71  cummo82   36.72%    failed      1.96%
+  72  cummo83   39.72%    passed     34.20%
+  73  cummo84   42.96%    passed     97.55%
+  74  cummo85   36.26%    passed     55.83%
+  75  cummo86   36.26%    passed     66.26%
+  76  cummo87   41.11%    passed     42.34%
+  77  cummo88   42.26%    passed     82.53%
+  78  cummo89   42.49%    passed     99.97%
+  79  cummo90   40.88%    passed     78.87%
+WARNING: 15 sequences contain more than 50% gaps/ambiguity
+****  TOTAL     42.71%  7 sequences failed composition chi2 test (p-value<5%; df=19)
+Checking for duplicate sequences: done in 0.00981853 secs using 1400% CPU
+
+
+Create initial parsimony tree by phylogenetic likelihood library (PLL)... 0.011 seconds
+Measuring multi-threading efficiency up to 16 CPU cores
+Increase to 10 rounds for branch lengths
+26 trees examined
+Threads: 1 / Time: 16.308 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -32423
+Threads: 2 / Time: 15.718 sec / Speedup: 1.037 / Efficiency: 52% / LogL: -32423
+Threads: 3 / Time: 10.400 sec / Speedup: 1.568 / Efficiency: 52% / LogL: -32423
+Threads: 4 / Time: 7.447 sec / Speedup: 2.190 / Efficiency: 55% / LogL: -32423
+Threads: 5 / Time: 7.790 sec / Speedup: 2.093 / Efficiency: 42% / LogL: -32423
+Determining AUTO threadcount: done in 57.6654 secs using 253.2% CPU
+BEST NUMBER OF THREADS: 4
+
+Perform fast likelihood tree search using LG+I+G model...
+Estimate model parameters (epsilon = 5.000)
+Perform nearest neighbor interchange...
+Optimizing NNI: done in 0.435102 secs using 394.1% CPU
+Estimate model parameters (epsilon = 1.000)
+1. Initial log-likelihood: -15512.763
+Optimal log-likelihood: -15512.408
+Proportion of invariable sites: 0.009
+Gamma shape alpha: 1.992
+Parameters optimization took 1 rounds (0.122 sec)
+Time for fast ML tree search: 0.918 seconds
+
+NOTE: ModelFinder requires 54 MB RAM!
+ModelFinder will test up to 44 protein models (sample size: 433) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+  1  LG            15813.493    155 31936.985    32111.570    32567.949
+  2  LG+I          15796.383    156 31904.767    32082.245    32539.802
+  3  LG+G4         15512.952    156 31337.905    31515.383    31972.940
+  4  LG+I+G4       15512.355    157 31338.710    31519.117    31977.816
+  5  LG+R2         15528.550    157 31371.099    31551.506    32010.205
+  6  LG+R3         15507.018    159 31332.036    31518.409    31979.283
+  7  LG+R4         15501.217    161 31324.433    31516.921    31979.822
+ 14  LG+I+R2       15525.397    158 31366.795    31550.167    32009.971
+ 15  LG+I+R3       15507.988    160 31335.976    31525.388    31987.294
+ 16  LG+I+R4       15501.949    162 31327.897    31523.497    31987.357
+ 25  LG+F+G4       15363.508    175 31077.017    31316.705    31789.396
+ 26  LG+F+I+G4     15363.519    176 31079.037    31322.412    31795.487
+ 28  LG+F+R3       15364.205    178 31084.409    31335.291    31809.001
+ 29  LG+F+R4       15358.856    180 31077.712    31336.283    31810.445
+Akaike Information Criterion:           LG+F+G4
+Corrected Akaike Information Criterion: LG+F+G4
+Bayesian Information Criterion:         LG+F+G4
+Best-fit model: LG+F+G4 chosen according to BIC
+
+All model information printed to pmoA_refs_methanohunt.faa.linsi.model.gz
+CPU time for ModelFinder: 172.206 seconds (0h:2m:52s)
+Wall-clock time for ModelFinder: 64.480 seconds (0h:1m:4s)
+Generating 1000 samples for ultrafast bootstrap (seed: 310612)...
+
+NOTE: 22 MB RAM (0 GB) is required!
+Estimate model parameters (epsilon = 0.100)
+1. Initial log-likelihood: -15363.508
+Optimal log-likelihood: -15363.506
+Gamma shape alpha: 1.951
+Parameters optimization took 1 rounds (0.091 sec)
+Wrote distance file to... 
+Computing ML distances based on estimated model parameters...
+Calculating distance matrix: done in 0.119149 secs using 397.9% CPU
+Computing ML distances took 0.119286 sec (of wall-clock time) 0.474231 sec (of CPU time)
+Setting up auxiliary I and S matrices: done in 0.000460452 secs
+Constructing RapidNJ tree: done in 0.0978311 secs using 197.5% CPU
+Computing RapidNJ tree took 0.098427 sec (of wall-clock time) 0.193234 sec (of CPU time)
+Log-likelihood of RapidNJ tree: -15432.217
+--------------------------------------------------------------------
+|             INITIALIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Generating 98 parsimony trees... 1.136 second
+Computing log-likelihood of 98 initial trees ... 3.750 seconds
+Current best score: -15363.506
+
+Do NNI search on 20 best initial trees
+Optimizing NNI: done in 0.221783 secs using 393.7% CPU
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 1: -15362.127
+Optimizing NNI: done in 0.773379 secs using 395.3% CPU
+Optimizing NNI: done in 0.683088 secs using 394.5% CPU
+Optimizing NNI: done in 0.461986 secs using 396.4% CPU
+Optimizing NNI: done in 0.52278 secs using 395.8% CPU
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 5: -15361.805
+Optimizing NNI: done in 0.5076 secs using 395.5% CPU
+Optimizing NNI: done in 0.899238 secs using 395.1% CPU
+Optimizing NNI: done in 1.0113 secs using 395.3% CPU
+Optimizing NNI: done in 0.919011 secs using 396.1% CPU
+Optimizing NNI: done in 1.02203 secs using 395.9% CPU
+Iteration 10 / LogL: -15362.976 / Time: 0h:0m:12s
+Optimizing NNI: done in 0.983037 secs using 396.5% CPU
+Optimizing NNI: done in 0.963106 secs using 395.3% CPU
+Optimizing NNI: done in 1.01028 secs using 396.1% CPU
+Optimizing NNI: done in 0.967408 secs using 395.6% CPU
+Optimizing NNI: done in 1.00457 secs using 395.1% CPU
+Optimizing NNI: done in 1.0534 secs using 395.9% CPU
+Optimizing NNI: done in 0.984583 secs using 395.6% CPU
+Optimizing NNI: done in 0.924171 secs using 396.2% CPU
+Optimizing NNI: done in 0.959395 secs using 396% CPU
+Optimizing NNI: done in 0.964532 secs using 395.5% CPU
+Iteration 20 / LogL: -15369.363 / Time: 0h:0m:22s
+Finish initializing candidate tree set (11)
+Current best tree score: -15361.805 / CPU time: 22.012
+Number of iterations: 20
+--------------------------------------------------------------------
+|               OPTIMIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Optimizing NNI: done in 1.34539 secs using 396.2% CPU
+Optimizing NNI: done in 1.87873 secs using 395.6% CPU
+Optimizing NNI: done in 1.22287 secs using 396.2% CPU
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 23: -15361.744
+Optimizing NNI: done in 1.60133 secs using 395.9% CPU
+Optimizing NNI: done in 1.34133 secs using 395.4% CPU
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 25: -15360.986
+Optimizing NNI: done in 1.61456 secs using 395.9% CPU
+Optimizing NNI: done in 0.726507 secs using 396.2% CPU
+Optimizing NNI: done in 1.3234 secs using 395.3% CPU
+Optimizing NNI: done in 1.11259 secs using 395.5% CPU
+Optimizing NNI: done in 1.11131 secs using 395.8% CPU
+Iteration 30 / LogL: -15366.252 / Time: 0h:0m:36s (0h:1m:58s left)
+Optimizing NNI: done in 1.17322 secs using 396% CPU
+Optimizing NNI: done in 1.43926 secs using 395.7% CPU
+Optimizing NNI: done in 1.38913 secs using 396.2% CPU
+Optimizing NNI: done in 1.41379 secs using 396.1% CPU
+Optimizing NNI: done in 1.30791 secs using 395.9% CPU
+Optimizing NNI: done in 1.36072 secs using 395.8% CPU
+Optimizing NNI: done in 1.23184 secs using 395.6% CPU
+Optimizing NNI: done in 1.20202 secs using 395.6% CPU
+Optimizing NNI: done in 1.20483 secs using 395.4% CPU
+Optimizing NNI: done in 1.02533 secs using 394.6% CPU
+Iteration 40 / LogL: -15364.575 / Time: 0h:0m:49s (0h:1m:47s left)
+Optimizing NNI: done in 1.14826 secs using 395.6% CPU
+Optimizing NNI: done in 1.37603 secs using 395.9% CPU
+Optimizing NNI: done in 1.60739 secs using 395.9% CPU
+Optimizing NNI: done in 1.2192 secs using 395.2% CPU
+Optimizing NNI: done in 1.48364 secs using 396% CPU
+Optimizing NNI: done in 1.62249 secs using 396% CPU
+Optimizing NNI: done in 1.57262 secs using 396% CPU
+UPDATE BEST LOG-LIKELIHOOD: -15360.983
+Optimizing NNI: done in 1.3608 secs using 395.6% CPU
+Optimizing NNI: done in 1.23235 secs using 395.5% CPU
+Optimizing NNI: done in 1.29386 secs using 396% CPU
+Iteration 50 / LogL: -15382.867 / Time: 0h:1m:3s (0h:1m:36s left)
+Log-likelihood cutoff on original alignment: -15410.939
+Optimizing NNI: done in 1.30627 secs using 396.2% CPU
+Optimizing NNI: done in 1.42898 secs using 395.8% CPU
+Optimizing NNI: done in 1.48089 secs using 395.8% CPU
+Optimizing NNI: done in 1.1368 secs using 395.5% CPU
+Optimizing NNI: done in 1.48395 secs using 395.2% CPU
+Optimizing NNI: done in 1.49333 secs using 395.3% CPU
+Optimizing NNI: done in 1.14046 secs using 394.8% CPU
+Optimizing NNI: done in 1.41585 secs using 395.9% CPU
+Optimizing NNI: done in 1.17553 secs using 395.3% CPU
+Optimizing NNI: done in 1.23239 secs using 395% CPU
+Iteration 60 / LogL: -15361.752 / Time: 0h:1m:16s (0h:1m:24s left)
+Optimizing NNI: done in 1.30801 secs using 394.6% CPU
+Optimizing NNI: done in 1.26988 secs using 395.1% CPU
+Optimizing NNI: done in 1.47544 secs using 395.1% CPU
+Optimizing NNI: done in 0.990113 secs using 395% CPU
+Optimizing NNI: done in 1.52026 secs using 395.7% CPU
+Optimizing NNI: done in 1.28291 secs using 395.5% CPU
+Optimizing NNI: done in 1.32889 secs using 395.3% CPU
+Optimizing NNI: done in 1.51452 secs using 396.1% CPU
+Optimizing NNI: done in 1.3932 secs using 395.4% CPU
+Optimizing NNI: done in 1.3173 secs using 395.8% CPU
+Iteration 70 / LogL: -15362.288 / Time: 0h:1m:30s (0h:1m:11s left)
+Optimizing NNI: done in 1.32978 secs using 395.6% CPU
+Optimizing NNI: done in 1.42156 secs using 395.4% CPU
+Optimizing NNI: done in 1.2762 secs using 395.5% CPU
+Optimizing NNI: done in 1.37986 secs using 395.1% CPU
+Optimizing NNI: done in 1.28582 secs using 395.6% CPU
+Optimizing NNI: done in 1.72579 secs using 395.3% CPU
+Optimizing NNI: done in 1.58519 secs using 395.8% CPU
+Optimizing NNI: done in 1.49737 secs using 395.3% CPU
+Optimizing NNI: done in 1.24446 secs using 395.8% CPU
+Optimizing NNI: done in 1.59244 secs using 395.6% CPU
+Iteration 80 / LogL: -15369.408 / Time: 0h:1m:44s (0h:0m:59s left)
+Optimizing NNI: done in 1.14771 secs using 396.1% CPU
+Optimizing NNI: done in 1.0802 secs using 395.5% CPU
+Optimizing NNI: done in 1.44853 secs using 394.9% CPU
+Optimizing NNI: done in 1.24834 secs using 395.4% CPU
+Optimizing NNI: done in 1.17906 secs using 394.7% CPU
+Optimizing NNI: done in 1.12134 secs using 395.3% CPU
+Optimizing NNI: done in 1.45517 secs using 395.6% CPU
+Optimizing NNI: done in 1.44599 secs using 395.7% CPU
+Optimizing NNI: done in 0.980556 secs using 395.7% CPU
+Optimizing NNI: done in 1.16698 secs using 394.8% CPU
+Iteration 90 / LogL: -15369.331 / Time: 0h:1m:56s (0h:0m:46s left)
+Optimizing NNI: done in 1.35485 secs using 395.4% CPU
+Optimizing NNI: done in 1.4291 secs using 395.4% CPU
+Optimizing NNI: done in 1.25411 secs using 395.6% CPU
+Optimizing NNI: done in 1.52842 secs using 395.6% CPU
+Optimizing NNI: done in 1.41025 secs using 395.7% CPU
+Optimizing NNI: done in 1.20324 secs using 396.2% CPU
+Optimizing NNI: done in 1.32199 secs using 395.6% CPU
+Optimizing NNI: done in 0.97881 secs using 396% CPU
+Optimizing NNI: done in 1.19873 secs using 396.2% CPU
+Optimizing NNI: done in 1.10344 secs using 394.8% CPU
+Iteration 100 / LogL: -15361.240 / Time: 0h:2m:9s (0h:0m:32s left)
+Log-likelihood cutoff on original alignment: -15395.492
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.998
+Optimizing NNI: done in 1.41696 secs using 395.5% CPU
+Optimizing NNI: done in 1.12641 secs using 395.8% CPU
+Optimizing NNI: done in 1.21267 secs using 396% CPU
+Optimizing NNI: done in 1.2596 secs using 395.8% CPU
+Optimizing NNI: done in 1.27131 secs using 396.2% CPU
+Optimizing NNI: done in 1.1997 secs using 396% CPU
+Optimizing NNI: done in 1.19362 secs using 395.5% CPU
+Optimizing NNI: done in 2.03109 secs using 395% CPU
+Optimizing NNI: done in 1.5693 secs using 395.8% CPU
+Optimizing NNI: done in 1.3748 secs using 395.9% CPU
+Iteration 110 / LogL: -15362.091 / Time: 0h:2m:23s (0h:1m:58s left)
+Optimizing NNI: done in 1.51307 secs using 396% CPU
+Optimizing NNI: done in 1.27379 secs using 396% CPU
+Optimizing NNI: done in 1.46878 secs using 396.3% CPU
+Optimizing NNI: done in 0.727884 secs using 396% CPU
+Optimizing NNI: done in 1.1369 secs using 395.7% CPU
+Optimizing NNI: done in 1.42641 secs using 396.3% CPU
+Optimizing NNI: done in 1.58333 secs using 395.7% CPU
+Optimizing NNI: done in 1.2472 secs using 396.1% CPU
+Optimizing NNI: done in 1.59049 secs using 396.1% CPU
+Optimizing NNI: done in 1.45569 secs using 396.3% CPU
+Iteration 120 / LogL: -15364.100 / Time: 0h:2m:37s (0h:1m:45s left)
+Optimizing NNI: done in 1.18632 secs using 395.3% CPU
+Optimizing NNI: done in 1.52468 secs using 394.7% CPU
+Optimizing NNI: done in 1.23908 secs using 395.1% CPU
+Optimizing NNI: done in 1.22571 secs using 395.9% CPU
+Optimizing NNI: done in 1.28296 secs using 395.8% CPU
+Optimizing NNI: done in 1.3208 secs using 395.6% CPU
+TREE SEARCH COMPLETED AFTER 126 ITERATIONS / Time: 0h:2m:45s
+
+--------------------------------------------------------------------
+|                    FINALIZING TREE SEARCH                        |
+--------------------------------------------------------------------
+Performs final model parameters optimization
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -15360.983
+Optimal log-likelihood: -15360.982
+Gamma shape alpha: 1.938
+Parameters optimization took 1 rounds (0.116 sec)
+BEST SCORE FOUND : -15360.982
+Creating bootstrap support values...
+Split supports printed to NEXUS file pmoA_refs_methanohunt.faa.linsi.splits.nex
+Total tree length: 22.614
+
+Total number of iterations: 126
+CPU time used for tree search: 646.805 sec (0h:10m:46s)
+Wall-clock time used for tree search: 164.481 sec (0h:2m:44s)
+Total CPU time used: 649.639 sec (0h:10m:49s)
+Total wall-clock time used: 165.304 sec (0h:2m:45s)
+
+Computing bootstrap consensus tree...
+Reading input file pmoA_refs_methanohunt.faa.linsi.splits.nex...
+79 taxa and 437 splits.
+Consensus tree written to pmoA_refs_methanohunt.faa.linsi.contree
+Reading input trees file pmoA_refs_methanohunt.faa.linsi.contree
+Log-likelihood of consensus tree: -15360.983
+
+Analysis results written to: 
+  IQ-TREE report:                pmoA_refs_methanohunt.faa.linsi.iqtree
+  Maximum-likelihood tree:       pmoA_refs_methanohunt.faa.linsi.treefile
+  Likelihood distances:          pmoA_refs_methanohunt.faa.linsi.mldist
+
+Ultrafast bootstrap approximation results written to:
+  Split support values:          pmoA_refs_methanohunt.faa.linsi.splits.nex
+  Consensus tree:                pmoA_refs_methanohunt.faa.linsi.contree
+  Screen log file:               pmoA_refs_methanohunt.faa.linsi.log
+
+Date and Time: Thu Jan 22 09:59:21 2026

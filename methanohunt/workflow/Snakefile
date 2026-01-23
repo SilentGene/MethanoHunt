@@ -1,0 +1,41 @@
+configfile: "config.yaml"
+
+# Define markers globally
+MARKERS = config.get("markers", ["McrA", "PmoA", "MmoX"])
+
+# Determine targets
+targets = [f"{config['output_dir']}/methanohunt_gene_classification.tsv"]
+
+# Add extracted sequence targets
+targets.extend([
+    f"{config['output_dir']}/classified_sequences/McrA_methanogen.faa",
+    f"{config['output_dir']}/classified_sequences/McrA_ANME.faa",
+    f"{config['output_dir']}/classified_sequences/PmoA.faa",
+    f"{config['output_dir']}/classified_sequences/MmoX.faa"
+])
+
+if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
+    targets.extend([
+        f"{config['output_dir']}/RPKG/RPKG_combined.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_classification.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_subtype.tsv",
+        f"{config['output_dir']}/MethanoHunt_report.html"
+    ])
+
+if config.get("run_tree"):
+    targets.extend(expand(f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk", marker=MARKERS))
+
+# Set default target
+rule all:
+    input: targets
+
+# Include modular rules
+include: "rules/hmm_mcrA.smk"
+include: "rules/hmm_pmoA.smk"
+include: "rules/hmm_mmoX.smk"
+include: "rules/placement.smk"
+include: "rules/classify.smk"
+include: "rules/quant.smk"
+include: "rules/vis.smk"
+include: "rules/tree.smk"
+include: "rules/extract.smk"
