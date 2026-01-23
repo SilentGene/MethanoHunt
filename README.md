@@ -17,6 +17,7 @@ MethanoHunt requires:
 *   HMMER3
 *   raxml-ng, epa-ng, gappa
 *   Minimap2, Samtools
+*   MicrobeCensus
 *   Python packages: `pandas`, `natsort`, `plotly`, `click`, `pysam`
 *   PaPaRa (install independently)
 
@@ -40,10 +41,10 @@ methanohunt taxonomy -i singleM_results/*.tax.tsv -o methanohunt_results
 *   `-o`: Prefix for Output files. It will generate a TSV result and an HTML report.
 *   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
 
-Here is an example of the output (methanohunt_output.html)[example_output.html].
+Here is an example of the output (MethanoHunt_taxonomy_report.html)[docs/MethanoHunt_taxonomy_report.html].
 
 Screenshot of the interactive chart:
-![MethanoHunt Chart](example.jpg)
+![MethanoHunt taxonomy profiling report](docs/taxonomic_profiling_report.jpg)
 
 ### Database Format
 
@@ -140,6 +141,11 @@ methanohunt gene \
 *   `bam/`: Mapping results and reference.
 *   `microbecensus/`: Genome equivalent estimation results.
 *   `hmm/`, `hits/`, `placement/`, `classification/`, Intermediate results.
+
+Here is an example of the output (MethanoHunt_gene_report.html)[docs/MethanoHunt_gene_report.html].
+
+Screenshot of the interactive chart:
+![MethanoHunt gene profiling report](docs/gene_profiling_report.jpg)
 
 ## Database
 
