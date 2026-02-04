@@ -1,16 +1,16 @@
 rule bwa_index:
     input:
-        ref = f"{config['output_dir']}/mapping_reference.fna"
+        ref = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn"
     output:
-        idx = f"{config['output_dir']}/mapping_reference.fna.sa"
+        idx = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn.sa"
     threads: 1
     shell:
         "bwa index {input.ref}"
 
 rule bwa_map:
     input:
-        ref = f"{config['output_dir']}/mapping_reference.fna",
-        idx = f"{config['output_dir']}/mapping_reference.fna.sa",
+        ref = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn",
+        idx = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn.sa",
         r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
         r2 = lambda wildcards: config["samples"][wildcards.sample]["r2"]
     output:

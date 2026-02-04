@@ -10,7 +10,7 @@ import re
 def strip_non_alnum_ends(s: str) -> str:
     return re.sub(r'^[^A-Za-z0-9]+|[^A-Za-z0-9]+$', '', s)
 
-def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, threads=4):
+def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, keep_bam, threads=4):
     """
     Wrapper to execute the Snakemake pipeline.
     """
@@ -56,6 +56,7 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
         "output_dir": os.path.abspath(output),
         "markers": markers_list,
         "run_tree": tree,
+        "keep_bam": keep_bam,
         "threads": threads,
         "mapper": mapper
     }

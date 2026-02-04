@@ -39,3 +39,38 @@ include: "rules/quant.smk"
 include: "rules/vis.smk"
 include: "rules/tree.smk"
 include: "rules/extract.smk"
+
+onsuccess:
+    import os
+    import glob
+    
+    # Check if we should keep BAM files (default is False/None -> Delete)
+    if not config.get("keep_bam"):
+        print("Cleaning up BAM files (default behavior)...")
+        bam_dir = os.path.join(config['output_dir'], "bam")
+        
+        if os.path.exists(bam_dir):
+            # Find .bam and .bam.bai files
+            files_to_remove = glob.glob(os.path.join(bam_dir, "*.bam")) + \
+                              glob.glob(os.path.join(bam_dir, "*.bam.bai"))
+            
+            removed_count = 0
+            for f in files_to_remove:
+                try:
+                    os.remove(f)
+                    removed_count += 1
+                except Exception as e:
+                    print(f"Warning: Could not remove {f}: {e}")
+            
+            if removed_count > 0:
+                print(f"Removed {removed_count} BAM/BAI files.")
+                
+                # Create placeholder file
+                placeholder = os.path.join(bam_dir, "removed_by_default")
+                try:
+                    with open(placeholder, "w") as f:
+                        f.write("BAM files produced during the run were removed to save space.\n")
+                        f.write("To keep them, run with --keep-bam flag.\n")
+                except Exception as e:
+                    print(f"Warning: Could not create placeholder file: {e}")
+

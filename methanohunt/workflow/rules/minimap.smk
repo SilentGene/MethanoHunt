@@ -1,15 +1,15 @@
 rule minimap_index:
     input:
-        ref = f"{config['output_dir']}/mapping_reference.fna"
+        ref = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn"
     output:
-        idx = f"{config['output_dir']}/mapping_reference.fna.mmi"
+        idx = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn.mmi"
     threads: 1
     shell:
         "minimap2 -d {output.idx} {input.ref}"
 
 rule minimap_map:
     input:
-        idx = f"{config['output_dir']}/mapping_reference.fna.mmi",
+        idx = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn.mmi",
         r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
         r2 = lambda wildcards: config["samples"][wildcards.sample]["r2"]
     output:

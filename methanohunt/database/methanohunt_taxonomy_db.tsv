@@ -21,10 +21,13 @@ Anaerobic methanotroph (ANME)	ANME-2b	d__Archaea; p__Halobacteriota; c__Methanos
 Anaerobic methanotroph (ANME)	ANME-2c	d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanogasteraceae	
 Anaerobic methanotroph (ANME)	ANME-2d	d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanoperedenaceae	
 Anaerobic methanotroph (ANME)	ANME-3	d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanosarcinaceae; g__DQIP01	
-Aerobic methanotroph (MOB)	NC10	d__Bacteria; p__Methylomirabilota; c__Methylomirabilia; o__Methylomirabilales; f__Methylomirabilaceae; g__Methylomirabilis; s__Methylomirabilis oxygeniifera	
-Aerobic methanotroph (MOB)	Class I aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Gammaproteobacteria; o__Methylococcales; f__Methylomonadaceae	
-Aerobic methanotroph (MOB)	Class II aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Alphaproteobacteria; o__Rhizobiales; f__Beijerinckiaceae	
-Aerobic methanotroph (MOB)	Class III aerobic methanotrophs	d__Bacteria; p__Verrucomicrobiota; c__Verrucomicrobiia; o__Methylacidiphilales; f__Methylacidiphilaceae	
+Aerobic methanotroph (MOB)	Type Ia aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Gammaproteobacteria; o__Methylococcales; f__Methylomonadaceae	Type Id aerobic methanotrophs
+Aerobic methanotroph (MOB)	Type Ib aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Gammaproteobacteria; o__Methylococcales; f__Methylococcaceae	
+Aerobic methanotroph (MOB)	Type Ic aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Gammaproteobacteria; o__Methylococcales; f__Methylothermaceae	
+Aerobic methanotroph (MOB)	Type Id aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Gammaproteobacteria; o__Methylococcales; f__Methylomonadaceae; g__Crenothrix	
+Aerobic methanotroph (MOB)	Type II aerobic methanotrophs	d__Bacteria; p__Pseudomonadota; c__Alphaproteobacteria; o__Rhizobiales; f__Beijerinckiaceae	
+Aerobic methanotroph (MOB)	Type III aerobic methanotrophs	d__Bacteria; p__Verrucomicrobiota; c__Verrucomicrobiia; o__Methylacidiphilales; f__Methylacidiphilaceae	
+Aerobic methanotroph (MOB)	Type IV methanotrophs NC10	d__Bacteria; p__Methylomirabilota; c__Methylomirabilia; o__Methylomirabilales; f__Methylomirabilaceae; g__Methylomirabilis; s__Methylomirabilis oxygeniifera	
 Anaerobic alkanotroph (ANKA)	AAO	d__Archaea; p__Halobacteriota; c__Syntropharchaeia; o__Syntropharchaeales	
 Anaerobic alkanotroph (ANKA)	AAO	d__Archaea; p__Halobacteriota; c__Methanoliparia	
 Anaerobic alkanotroph (ANKA)	AAO	d__Archaea; p__Thermoproteota; c__Bathyarchaeia; o__Bathyarchaeales; f__Bathyarchaeaceae	

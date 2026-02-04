@@ -91,8 +91,9 @@ def parse_greedy_args(args, flags):
 @click.option("-o", "--output", default=None, help="Output directory path")
 @click.option("--marker", default=None, help="Comma-separated list of markers (e.g. McrA,PmoA). Default: all")
 @click.option("--tree", is_flag=True, default=False, help="Generate phylogenetic tree using FastTree")
+@click.option("--keep-bam", is_flag=True, default=False, help="Keep BAM files after run (default: delete)")
 @click.option("-t", "--threads", default=4, help="Number of threads to use (default: 4)")
-def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, threads):
+def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, keep_bam, threads):
     """Run functional gene-based profiling pipeline."""
     
     # Parse greedy arguments overrides
@@ -112,7 +113,7 @@ def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, t
     click.echo(f"Running gene pipeline for {prot}...")
     
     from .gene import run_gene_pipeline
-    run_gene_pipeline(prot, nucl, final_reads_1, final_reads_2, mapper, database, output, marker, tree, threads)
+    run_gene_pipeline(prot, nucl, final_reads_1, final_reads_2, mapper, database, output, marker, tree, keep_bam, threads)
 
 
 @cli.command()
