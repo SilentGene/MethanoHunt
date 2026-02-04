@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
 from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots
 import os
 import sys
 
@@ -149,11 +150,14 @@ def compute_abundances(db, tax_files):
 
 
 def generate_stacked_bar_chart(result, output_prefix, group_file=None):
+def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     """
     Generate an interactive grouped stacked bar chart using Plotly.
     X-axis: sample names (grouped by Classification)
     Y-axis: relative abundance (%)
     Stacked bars: colored by keyword (GTDB_taxonomy)
+    
+    If group_file is provided, creates faceted subplots by group.
     
     If group_file is provided, creates faceted subplots by group.
     
@@ -248,12 +252,28 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
                 else:
                     continue # Skip samples not in the group file if grouping is active
             
+            
+            # Determine group
+            group = "Data" # Default if no group file
+            if group_file:
+                # If sample not in group file, you might want to exclude it or put in "Ungrouped"
+                # Here we only include if in group file based on request? 
+                # Request says: "subplots contains samples in each group". Implicitly, if not in group, maybe exclude?
+                # Let's keep "Ungrouped" to be safe or skip?
+                # Usually omitting samples not in group file is safer for clarity.
+                if sample in sample_to_group:
+                    group = sample_to_group[sample]
+                else:
+                    continue # Skip samples not in the group file if grouping is active
+            
             # Keep zeros so samples remain on the axis even if abundance is zero
             plot_data.append({
                 "Sample": sample,
                 "Classification": classification,
                 "Keyword": keyword,
                 "Relative Abundance (%)": rel_abundance,
+                "Color": color_map[keyword],
+                "Group": group
                 "Color": color_map[keyword],
                 "Group": group
             })
@@ -294,6 +314,16 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     total_samples = len(plot_df["Sample"].unique())
     # Increase base width to accommodate fixed right margin for legend
     base_width = min(1600, max(1100, 1100 + total_samples * 40))
+
+    if group_file:
+         unique_groups = groups_ordered
+         # Filter groups that actually exist in the data
+         existing_groups = plot_df["Group"].unique()
+         unique_groups = [g for g in unique_groups if g in existing_groups]
+         if not unique_groups: # Fallback
+             unique_groups = natsorted(existing_groups)
+    else:
+        unique_groups = ["Data"]
 
     for classification in unique_classifications:
         class_df = plot_df[plot_df["Classification"] == classification].copy()
@@ -343,6 +373,7 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
                     marker_color=color_map[keyword],
                     legendgroup=keyword,
                     showlegend=show_legend, 
+                    showlegend=show_legend, 
                     hovertemplate="<b>Sample:</b> %{x}<br>" +
                                  "<b>Classification:</b> " + classification + "<br>" +
                                  f"<b>Keyword:</b> {keyword}<br>" +
@@ -376,6 +407,7 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
             width=base_width,
             hovermode="closest",
              legend=dict(
+             legend=dict(
                 title="Taxonomy",
                 orientation="v",
                 yanchor="top",
@@ -385,6 +417,16 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
             ),
             margin=dict(t=60, b=90, l=80, r=350)
         )
+        fig_c.update_layout(**layout_args)
+        
+        if not group_file:
+             fig_c.update_xaxes(tickangle=-45)
+             fig_c.update_yaxes(title_text="Relative Abundance (%)")
+        else:
+             # Update all xaxes in subplots
+             fig_c.update_xaxes(tickangle=-45)
+             fig_c.update_yaxes(title_text="Relative Abundance (%)", col=1)
+
         fig_c.update_layout(**layout_args)
         
         if not group_file:
@@ -430,6 +472,11 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     if box_fig:
         figs.append(("Grouped Abundance Summary", box_fig))
 
+    
+    # Add Box Plot if groups are present
+    if box_fig:
+        figs.append(("Grouped Abundance Summary", box_fig))
+
     for idx, (_, fig_c) in enumerate(figs):
         include_js = "cdn" if idx == 0 else False
         html_parts.append(pio.to_html(fig_c, include_plotlyjs=include_js, full_html=False))
@@ -455,6 +502,7 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     print(f"Saved interactive chart to {html_file}")
 
 
+def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
 def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
     """
     Main entry point for taxonomy analysis.
@@ -491,4 +539,5 @@ def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
     result.to_csv(tsv_file, sep="\t", index=False)
     print(f"Saved relative abundance results to {tsv_file}")
     
+    generate_stacked_bar_chart(result, output_prefix, group_file)
     generate_stacked_bar_chart(result, output_prefix, group_file)
