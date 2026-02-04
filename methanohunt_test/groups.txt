@@ -1,0 +1,4 @@
+sample1	GroupA
+sample2	GroupA
+sample3	GroupB
+sample4	GroupB

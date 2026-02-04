@@ -17,8 +17,9 @@ def cli():
 @click.option("-i", "--input", "input_files", multiple=True, required=False, help="Input tax.tsv files (supports glob patterns)")
 @click.option("-db", "--database", default=None, help="Path to MethanoHunt database file")
 @click.option("-o", "--output", required=True, help="Output directory path (will be created if not exists)")
+@click.option("-g", "--group", "group_file", default=None, help="Tab-separated file for grouping samples (Sample\\tGroup)")
 @click.argument("extra_files", nargs=-1)
-def taxonomy(input_files, database, output, extra_files):
+def taxonomy(input_files, database, output, group_file, extra_files):
     """Run taxonomy-based profiling.
     
     Accepts input files via -i/--input or as positional arguments (e.g. *.tsv).
@@ -31,7 +32,7 @@ def taxonomy(input_files, database, output, extra_files):
              raise click.UsageError("No input files provided. Use -i or positional arguments.")
 
         # run_taxonomy expects list of patterns or files.
-        run_taxonomy(all_inputs, database, output)
+        run_taxonomy(all_inputs, database, output, group_file)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)

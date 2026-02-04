@@ -34,17 +34,19 @@ methanohunt setup  # to install PaPaRa
 Analyze taxonomic abundance tables.
 
 ```bash
-methanohunt taxonomy -i singleM_results/*.tax.tsv -o methanohunt_results
-```
+methanohunt taxonomy -i singleM_results/*.tax.tsv -o methanohunt_results [-db taxonomy_db.tsv --group sample_group.tsv]
 
 *   `-i`: Input taxonomy tables (supports glob patterns).
 *   `-o`: Prefix for Output files. It will generate a TSV result and an HTML report.
 *   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
+*   `--group/-g`: (Optional) User can provide a tsv file to group samples. Then the pipeline will generate a grouped visualization. The tsv file should have the following format:
 
-Here is an example of the output (MethanoHunt_taxonomy_report.html)[docs/MethanoHunt_taxonomy_report.html].
-
-Screenshot of the interactive chart:
-![MethanoHunt taxonomy profiling report](docs/taxonomic_profiling_report.jpg)
+    sample1	group1
+    sample2	group1
+    sample3	group2
+    sample4	group2
+    
+```
 
 ### Database Format
 
