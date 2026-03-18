@@ -37,7 +37,6 @@ def load_database(db_file):
     db["keyword"] = keywords
     return db
 
-
 def load_singlem_files(input_patterns):
     """
     Load all sample.tax.tsv files using glob patterns.
@@ -53,7 +52,6 @@ def load_singlem_files(input_patterns):
         files.extend(matches)
     
     return sorted(list(set(files))) # Remove duplicates
-
 
 def get_sample_name(tax_file):
     """
@@ -72,7 +70,6 @@ def get_sample_name(tax_file):
     except Exception as e:
         print(f"Warning: Could not read sample name from {tax_file}: {e}")
         return os.path.basename(tax_file)
-
 
 def compute_abundances(db, tax_files):
     """
@@ -147,16 +144,12 @@ def compute_abundances(db, tax_files):
 
     return results[base_cols + valid_samples]
 
-
-def generate_stacked_bar_chart(result, output_prefix, group_file=None):
 def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     """
     Generate an interactive grouped stacked bar chart using Plotly.
     X-axis: sample names (grouped by Classification)
     Y-axis: relative abundance (%)
     Stacked bars: colored by keyword (GTDB_taxonomy)
-    
-    If group_file is provided, creates faceted subplots by group.
     
     If group_file is provided, creates faceted subplots by group.
     
@@ -251,28 +244,12 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
                 else:
                     continue # Skip samples not in the group file if grouping is active
             
-            
-            # Determine group
-            group = "Data" # Default if no group file
-            if group_file:
-                # If sample not in group file, you might want to exclude it or put in "Ungrouped"
-                # Here we only include if in group file based on request? 
-                # Request says: "subplots contains samples in each group". Implicitly, if not in group, maybe exclude?
-                # Let's keep "Ungrouped" to be safe or skip?
-                # Usually omitting samples not in group file is safer for clarity.
-                if sample in sample_to_group:
-                    group = sample_to_group[sample]
-                else:
-                    continue # Skip samples not in the group file if grouping is active
-            
             # Keep zeros so samples remain on the axis even if abundance is zero
             plot_data.append({
                 "Sample": sample,
                 "Classification": classification,
                 "Keyword": keyword,
                 "Relative Abundance (%)": rel_abundance,
-                "Color": color_map[keyword],
-                "Group": group
                 "Color": color_map[keyword],
                 "Group": group
             })
@@ -372,7 +349,6 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
                     marker_color=color_map[keyword],
                     legendgroup=keyword,
                     showlegend=show_legend, 
-                    showlegend=show_legend, 
                     hovertemplate="<b>Sample:</b> %{x}<br>" +
                                  "<b>Classification:</b> " + classification + "<br>" +
                                  f"<b>Keyword:</b> {keyword}<br>" +
@@ -406,7 +382,6 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
             width=base_width,
             hovermode="closest",
              legend=dict(
-             legend=dict(
                 title="Taxonomy",
                 orientation="v",
                 yanchor="top",
@@ -416,16 +391,6 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
             ),
             margin=dict(t=60, b=90, l=80, r=350)
         )
-        fig_c.update_layout(**layout_args)
-        
-        if not group_file:
-             fig_c.update_xaxes(tickangle=-45)
-             fig_c.update_yaxes(title_text="Relative Abundance (%)")
-        else:
-             # Update all xaxes in subplots
-             fig_c.update_xaxes(tickangle=-45)
-             fig_c.update_yaxes(title_text="Relative Abundance (%)", col=1)
-
         fig_c.update_layout(**layout_args)
         
         if not group_file:
@@ -471,11 +436,6 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
     if box_fig:
         figs.append(("Grouped Abundance Summary", box_fig))
 
-    
-    # Add Box Plot if groups are present
-    if box_fig:
-        figs.append(("Grouped Abundance Summary", box_fig))
-
     for idx, (_, fig_c) in enumerate(figs):
         include_js = "cdn" if idx == 0 else False
         html_parts.append(pio.to_html(fig_c, include_plotlyjs=include_js, full_html=False))
@@ -500,8 +460,6 @@ def generate_stacked_bar_chart(result, output_prefix, group_file=None):
         f.write("\n</body></html>")
     print(f"Saved interactive chart to {html_file}")
 
-
-def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
 def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
     """
     Main entry point for taxonomy analysis.
@@ -533,10 +491,23 @@ def run_taxonomy(input_patterns, database_path, output_dir, group_file=None):
 
     # Define output paths with fixed names inside the output directory
     output_prefix = os.path.join(output_dir, "methanohunt_taxonomy")
-    tsv_file = f"{output_prefix}.tsv"
+    tsv_level_1 = f"{output_prefix}_level_1.tsv"
     
-    result.to_csv(tsv_file, sep="\t", index=False)
-    print(f"Saved relative abundance results to {tsv_file}")
+    result.to_csv(tsv_level_1, sep="\t", index=False)
+    print(f"Saved relative abundance results to {tsv_level_1}")
     
-    generate_stacked_bar_chart(result, output_prefix, group_file)
+    # Generate level 2 table
+    cols_to_drop = ["Subgroup", "GTDB_taxonomy", "Exception_taxonomy", "Prefered_name"]
+    drop_cols = [c for c in cols_to_drop if c in result.columns]
+    level_2_df = result.drop(columns=drop_cols)
+    
+    if "Classification" in level_2_df.columns:
+        level_2_grouped = level_2_df.groupby("Classification").sum(numeric_only=True)
+        level_2_transposed = level_2_grouped.T
+        level_2_transposed.index.name = "Sample"
+        
+        tsv_level_2 = f"{output_prefix}_level_2.tsv"
+        level_2_transposed.to_csv(tsv_level_2, sep="\t")
+        print(f"Saved aggregated relative abundance results to {tsv_level_2}")
+
     generate_stacked_bar_chart(result, output_prefix, group_file)

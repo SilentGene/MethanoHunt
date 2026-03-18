@@ -59,7 +59,7 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 
 > You can customize the database by editing this TSV file.
 
-### A example workflow from raw reads to MethanoHunt results
+### An example workflow from raw reads to MethanoHunt taxonomy mode results
 
 Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
 
@@ -86,9 +86,8 @@ done
 **Step 2**: Run MethanoHunt on the generated taxonomic profiles
 
 ```bash
-mkdir -p ../methanohunt_results  # create MethanoHunt output directory
-cd ../methanohunt_results
-python /my/software/MethanoHunt/methanohunt.py -i ../singleM_results/*_singlem.tax.tsv -o methanohunt_results.tsv
+
+methanohunt taxonomy -i ./singleM_results/*_singlem.tax.tsv -o methanohunt_results
 ```
 
 ### Notes
