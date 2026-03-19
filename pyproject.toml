@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "methanohunt"
-version = "0.1.0"
+version = "0.6.0"
 description = "Summarize relative abundance of methane cyclers from taxonomic profiling or functional gene data."
 readme = "README.md"
 requires-python = ">=3.8"

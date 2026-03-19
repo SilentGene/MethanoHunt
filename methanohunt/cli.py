@@ -5,6 +5,7 @@ import shutil
 import tarfile
 import urllib.request
 from .taxonomy import run_taxonomy
+from .annotate import run_annotate
 
 # from .gene import run_gene_pipeline  # To be implemented
 
@@ -115,6 +116,22 @@ def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, k
     
     from .gene import run_gene_pipeline
     run_gene_pipeline(prot, nucl, final_reads_1, final_reads_2, mapper, database, output, marker, tree, keep_bam, threads)
+
+
+@cli.command()
+@click.option("-i", "--input", "input_file", required=True, help="Input TSV file to annotate")
+@click.option("-c", "--column", "column_name", required=True, help="Column name containing the GTDB taxonomy strings")
+@click.option("-db", "--database", default=None, help="Path to MethanoHunt taxonomy database file")
+@click.option("-o", "--output", "output_file", required=True, help="Output TSV file path")
+def annotate(input_file, column_name, database, output_file):
+    """Annotate user TSV file with MethanoHunt functional classifications."""
+    click.echo(f"Annotating {input_file} using column '{column_name}'...")
+    try:
+        run_annotate(input_file, column_name, output_file, database)
+        click.echo(f"Annotation complete. Results saved to {output_file}")
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        sys.exit(1)
 
 
 @cli.command()

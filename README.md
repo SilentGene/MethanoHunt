@@ -4,9 +4,10 @@ A pipeline to profile methane cyclers from taxonomic profiling data or functiona
 
 ## Overview
 
-MethanoHunt provides two main workflows:
+MethanoHunt provides several workflows:
 1.  **Taxonomy**: Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
 2.  **Gene**: A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
+3.  **Annotate**: Annotate taxonomic profiles with methane cycler information using GTDB taxonomy.
 
 ## Installation
 
@@ -125,8 +126,6 @@ methanohunt gene \
 *   `--tree`: (Optional) Build phylogenetic trees together with reference markers using fasttree. Default is False.
 *   `-db`: Database folder. Default is the database folder included in the package.
 
-## Output
-
 ### Gene Module Output
 
 **Important results:**
@@ -147,6 +146,26 @@ Here is an example of the output (MethanoHunt_gene_report.html)[docs/MethanoHunt
 
 Screenshot of the interactive chart:
 ![MethanoHunt gene profiling report](docs/gene_profiling_report.jpg)
+
+## Annotate Workflow
+Annotate taxonomic profiles with methane cycler information according to GTDB taxonomy.
+
+Example:
+```bash
+methanohunt annotate -i MAG_classification.tsv -c Taxonomy -o methanohunt_annotate_results.tsv
+```
+
+*   `-i`: Input tsv file, including a column with taxonomic classification. This table MUST contain header.
+*   `-c`: Column name of the taxonomic classification in the input tsv file.
+*   `-o`: Output tsv file.
+*   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
+
+### Output
+
+This workflow will generate a tsv file with the following two additional columns added to the input tsv file:
+
+*   `MethanoHunt_classification`: methane cycling role
+*   `MethanoHunt_subgroup`: methane cycling subgroup
 
 ## Database
 
