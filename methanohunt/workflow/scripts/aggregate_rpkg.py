@@ -5,14 +5,14 @@ def aggregate_rpkg(rpkg_files, classification_file, out_combined, out_class, out
     # 1. Load classification mapping
     cls_df = pd.read_csv(classification_file, sep='\t')
     
-    if 'name' not in cls_df.columns:
-        raise ValueError("Classification file missing 'name' column.")
+    if 'gene_id' not in cls_df.columns:
+        raise ValueError("Classification file missing 'gene_id' column.")
     
     if 'classification' not in cls_df.columns: cls_df['classification'] = 'Unknown'
     if 'subtype' not in cls_df.columns: cls_df['subtype'] = 'Unknown'
 
-    gene_to_class = dict(zip(cls_df['name'], cls_df['classification']))
-    gene_to_subtype = dict(zip(cls_df['name'], cls_df['subtype']))
+    gene_to_class = dict(zip(cls_df['gene_id'], cls_df['classification']))
+    gene_to_subtype = dict(zip(cls_df['gene_id'], cls_df['subtype']))
 
     # 2. Combine Samples
     combined_df = pd.DataFrame() 

@@ -37,7 +37,7 @@ rule classify_genes:
         
         if not all_dfs:
             # Create empty df with expected columns if no inputs
-            final_df = pd.DataFrame(columns=["name", "classification", "marker_hmm_hit"])
+            final_df = pd.DataFrame(columns=["gene_id", "classification", "marker_hmm_hit"])
         else:
             final_df = pd.concat(all_dfs)
             
@@ -51,6 +51,9 @@ rule classify_genes:
             elif "classification" in final_df.columns:
                  # If previously renamed or output differently
                  final_df.rename(columns={"classification": "subtype"}, inplace=True)
+                 
+            if "name" in final_df.columns:
+                final_df.rename(columns={"name": "gene_id"}, inplace=True)
             
             # Derive new 'classification' column
             def get_classification(val):

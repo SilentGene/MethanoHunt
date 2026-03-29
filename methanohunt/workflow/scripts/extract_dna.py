@@ -6,11 +6,11 @@ def extract_dna(classification_file, nucl_file, output_file):
     # Load classification to get list of gene names/IDs
     try:
         df = pd.read_csv(classification_file, sep='\t')
-        if 'name' not in df.columns:
+        if 'gene_id' not in df.columns:
             # Fallback or empty
             valid_ids = set()
         else:
-            valid_ids = set(df['name'].astype(str))
+            valid_ids = set(df['gene_id'].astype(str))
     except:
         valid_ids = set()
     
@@ -20,7 +20,7 @@ def extract_dna(classification_file, nucl_file, output_file):
         return
 
     # Filter nucl file
-    # Assuming IDs in nucl file match 'name' in classification (or first part)
+    # Assuming IDs in nucl file match 'gene_id' in classification (or first part)
     # Using SeqIO index might be slow for huge files, straightforward parse is usually fine.
     
     with open(output_file, 'w') as out_handle:

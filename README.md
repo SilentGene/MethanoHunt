@@ -5,9 +5,9 @@ A pipeline to profile methane cyclers from taxonomic profiling data or functiona
 ## Overview
 
 MethanoHunt provides several workflows:
-1.  **Taxonomy**: Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
-2.  **Gene**: A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
-3.  **Annotate**: Annotate taxonomic profiles with methane cycler information using GTDB taxonomy.
+1.  [**Profile**](#profile-workflow): Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
+2.  [**Gene**](#gene-workflow): A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
+3.  [**Taxonomy**](#taxonomy-workflow): Find methane cyclers according to GTDB taxonomy.
 
 ## Installation
 
@@ -31,11 +31,11 @@ conda activate methanohunt
 methanohunt setup  # to install PaPaRa
 ```
 
-## Taxonomy Workflow
+## Profile Workflow
 Analyze taxonomic abundance tables.
 
 ```bash
-methanohunt taxonomy -i singleM_results/*.tax.tsv -o methanohunt_results [-db taxonomy_db.tsv --group sample_group.tsv]
+methanohunt profile -i singleM_results/*.tax.tsv -o methanohunt_results [-db taxonomy_db.tsv --group sample_group.tsv]
 
 *   `-i`: Input taxonomy tables (supports glob patterns).
 *   `-o`: Prefix for Output files. It will generate a TSV result and an HTML report.
@@ -60,7 +60,7 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 
 > You can customize the database by editing this TSV file.
 
-### An example workflow from raw reads to MethanoHunt taxonomy mode results
+### An example workflow from raw reads to MethanoHunt profile mode results
 
 Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
 
@@ -88,7 +88,7 @@ done
 
 ```bash
 
-methanohunt taxonomy -i ./singleM_results/*_singlem.tax.tsv -o methanohunt_results
+methanohunt profile -i ./singleM_results/*_singlem.tax.tsv -o methanohunt_results
 ```
 
 ### Notes
@@ -147,12 +147,12 @@ Here is an example of the output (MethanoHunt_gene_report.html)[docs/MethanoHunt
 Screenshot of the interactive chart:
 ![MethanoHunt gene profiling report](docs/gene_profiling_report.jpg)
 
-## Annotate Workflow
+## Taxonomy Workflow
 Annotate taxonomic profiles with methane cycler information according to GTDB taxonomy.
 
 Example:
 ```bash
-methanohunt annotate -i MAG_classification.tsv -c Taxonomy -o methanohunt_annotate_results.tsv
+methanohunt taxonomy -i MAG_classification.tsv -c Taxonomy -o methanohunt_annotate_results.tsv
 ```
 
 *   `-i`: Input tsv file, including a column with taxonomic classification. This table MUST contain header.

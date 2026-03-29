@@ -4,8 +4,8 @@ import sys
 import shutil
 import tarfile
 import urllib.request
+from .profile import run_profile
 from .taxonomy import run_taxonomy
-from .annotate import run_annotate
 
 # from .gene import run_gene_pipeline  # To be implemented
 
@@ -20,7 +20,7 @@ def cli():
 @click.option("-o", "--output", required=True, help="Output directory path (will be created if not exists)")
 @click.option("-g", "--group", "group_file", default=None, help="Tab-separated file for grouping samples (Sample\\tGroup)")
 @click.argument("extra_files", nargs=-1)
-def taxonomy(input_files, database, output, group_file, extra_files):
+def profile(input_files, database, output, group_file, extra_files):
     """Run taxonomy-based profiling.
     
     Accepts input files via -i/--input or as positional arguments (e.g. *.tsv).
@@ -32,8 +32,8 @@ def taxonomy(input_files, database, output, group_file, extra_files):
         if not all_inputs:
              raise click.UsageError("No input files provided. Use -i or positional arguments.")
 
-        # run_taxonomy expects list of patterns or files.
-        run_taxonomy(all_inputs, database, output, group_file)
+        # run_profile expects list of patterns or files.
+        run_profile(all_inputs, database, output, group_file)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
@@ -123,11 +123,11 @@ def gene(prot, nucl, reads_1, reads_2, mapper, database, output, marker, tree, k
 @click.option("-c", "--column", "column_name", required=True, help="Column name containing the GTDB taxonomy strings")
 @click.option("-db", "--database", default=None, help="Path to MethanoHunt taxonomy database file")
 @click.option("-o", "--output", "output_file", required=True, help="Output TSV file path")
-def annotate(input_file, column_name, database, output_file):
+def taxonomy(input_file, column_name, database, output_file):
     """Annotate user TSV file with MethanoHunt functional classifications."""
     click.echo(f"Annotating {input_file} using column '{column_name}'...")
     try:
-        run_annotate(input_file, column_name, output_file, database)
+        run_taxonomy(input_file, column_name, output_file, database)
         click.echo(f"Annotation complete. Results saved to {output_file}")
     except Exception as e:
         click.echo(f"Error: {e}", err=True)

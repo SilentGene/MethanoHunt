@@ -1,0 +1,59 @@
+Group	Classification	Enzyme	EC	Subunit	KO	If_key_in_enzyme	Module	Note
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	mcrA	K00399	TRUE	mcr	Kofam currently cannot reliably distinguish methanogen-type mcr and ANME-type mcr
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	atwA	K00400	FALSE	mcr	
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	mcrB	K00401	FALSE	mcr	
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	mcrG	K00402	FALSE	mcr	
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	mcrC	K03421	FALSE	mcr	
+Methanogenesis	Methanogenesis (mcr)	mcr	2.8.4.1	mcrD	K03422	FALSE	mcr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrA	K00577	TRUE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrB	K00578	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrC	K00579	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrD	K00580	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrE	K00581	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrF	K00582	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrG	K00583	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic & Acetotrophic	mtr	7.2.1.4	mtrH	K00584	FALSE	mtr	
+Methanogenesis	Hydrogenotrophic	mer	1.5.98.2	mer	K00320	TRUE	mer	
+Methanogenesis	Hydrogenotrophic	mtd	1.5.98.1	mtd	K00319	TRUE	mtd/mtdAB/hmd	
+Methanogenesis	Hydrogenotrophic	mtdAB	1.5.1.5	mtdA	K00300	FALSE	mtd/mtdAB/hmd	
+Methanogenesis	Hydrogenotrophic	mtdAB	1.5.1.5	mtdB	K10714	FALSE	mtd/mtdAB/hmd	
+Methanogenesis	Hydrogenotrophic	hmd	1.12.98.2	hmd	K13942	FALSE	mtd/mtdAB/hmd	
+Methanogenesis	Hydrogenotrophic	mch	3.5.4.27	mch	K01499	TRUE	mch	
+Methanogenesis	Hydrogenotrophic	ftr	2.3.1.101	ftr	K00672	TRUE	ftr	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdA	K00200	TRUE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdB	K00201	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdC	K00202	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdD	K00203	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdH	K00204	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdF	K00205	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdE	K11261	FALSE	fwd	
+Methanogenesis	Hydrogenotrophic	fwd	1.2.7.12	fwdG	K11260	FALSE	fwd	
+Methanogenesis	Acetoclastic	ack	2.7.2.1	ackA	K00925	TRUE	[ack+pta]/acs	
+Methanogenesis	Acetoclastic	pta	2.3.1.8	pta	K00625	TRUE	[ack+pta]/acs	
+Methanogenesis	Acetoclastic	acs	6.2.1.1	acs	K01895	TRUE	[ack+pta]/acs	
+Methanogenesis	Acetoclastic	ACDS	2.3.1.169	cdhC	K00193	TRUE	ACDS	
+Methanogenesis	Acetoclastic	ACDS	2.1.1.245	cdhE	K00197	FALSE	ACDS	
+Methanogenesis	Acetoclastic	ACDS	2.1.1.245	cdhD	K00194	FALSE	ACDS	
+Methanogenesis	Methylotrophic (Methanol)	mta	2.1.1.246 2.1.1.377	mtaA	K14080	TRUE	mta	
+Methanogenesis	Methylotrophic (Methanol)	mta	2.1.1.90	mtaB	K04480	FALSE	mta	
+Methanogenesis	Methylotrophic (Methanol)	mta	NA	mtaC	K14081	FALSE	mta	
+Methanogenesis	Methylotrophic (Methylamine)	mtm	2.1.1.248	mtmB	K16176	TRUE	mtm+mtbA	
+Methanogenesis	Methylotrophic (Methylamine)	mtm	NA	mtmC	K16177	FALSE	mtm+mtbA	
+Methanogenesis	Methylotrophic (Dimethylamine)	mtb	2.1.1.249	mtbB	K16178	TRUE	mtb+mtbA	
+Methanogenesis	Methylotrophic (Dimethylamine)	mtb	NA	mtbC	K16179	FALSE	mtb+mtbA	
+Methanogenesis	Methylotrophic (Trimethylamine)	mtt	2.1.1.250	mttB	K14083	TRUE	mtt+mtbA	
+Methanogenesis	Methylotrophic (Trimethylamine)	mtt	NA	mttC	K14084	FALSE	mtt+mtbA	
+Methanogenesis	"Methylotrophic (mono-, di, tri-methylamine)"	mtbA	2.1.1.247	mtbA	K14082	TRUE	shared by many	
+CO	carboxydotrophy	CODH	1.2.7.4	cdhA	K00192	TRUE	CODH/coo	
+CO	carboxydotrophy	CODH	NA	cdhB	K00195	FALSE	CODH/coo	
+CO	carboxydotrophy	coo	NA	cooF	K00196	FALSE	CODH/coo	
+CO	carboxydotrophy	coo	NA	cooS	K00198	TRUE	CODH/coo	
+aerobic methane oxidation	Particulate methane monooxygenase (pMMO)	pmo	1.14.18.3	pmoA	K10944	TRUE	pmo	"Kofam currently cannot reliably distinguish pmo from amo genes despite their distinct functions; thus, KO K10944 annotated by Kofam is not necessarily pmoA and may instead be amoA (ammonia oxidation), so confirming true pmo genes may require a curated/customized reference database."
+aerobic methane oxidation	Particulate methane monooxygenase (pMMO)	pmo	NA	pmoB	K10945	FALSE	pmo	
+aerobic methane oxidation	Particulate methane monooxygenase (pMMO)	pmo	NA	pmoC	K10945	FALSE	pmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	1.14.13.25	mmoX	K16157	TRUE	mmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	1.14.13.25	mmoY	K16158	FALSE	mmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	1.14.13.25	mmoZ	K16159	FALSE	mmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	NA	mmoB	K16160	FALSE	mmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	1.14.13.25	mmoC	K16161	FALSE	mmo	
+aerobic methane oxidation	Soluble  methane monooxygenase (sMMO)	mmo	NA	mmoD	K16162	FALSE	mmo	

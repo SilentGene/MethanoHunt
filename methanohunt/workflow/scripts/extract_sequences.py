@@ -8,9 +8,9 @@ def extract_sequences(classification_file, protein_file, output_files):
     
     # Ensure classification column exists (it should be renamed to 'classification' by classify.smk)
     # The user request clarified that column 'classification' is used for filtering.
-    # And 'name' column for ID matching.
+    # And 'gene_id' column for ID matching.
     
-    if 'subtype' not in df.columns or 'name' not in df.columns:
+    if 'subtype' not in df.columns or 'gene_id' not in df.columns:
         # Fallback or error? Assuming structure is correct per previous steps.
         # If empty or not fully formed, we might just return empty files.
         pass
@@ -26,7 +26,7 @@ def extract_sequences(classification_file, protein_file, output_files):
         # New 'classification' column has broader categories like 'McrA (methanogen)'.
         # Our filtering logic relies on "Methanogen...", "ANME..." which are in 'subtype' now.
         subtype = str(row.get('subtype', ''))
-        seq_id = str(row.get('name', ''))
+        seq_id = str(row.get('gene_id', ''))
         
         if not subtype or not seq_id:
             continue
