@@ -2,19 +2,19 @@
 
 rule hmmsearch_pmoA:
     input:
-        faa = config["protein"],
+        faa = f"{config['output_dir']}/faa/{{genome}}.faa",
         hmm = f"{config['database']}/PmoA/PmoAAmoA-PF02461.hmm"
     output:
-        tbl = f"{config['output_dir']}/hmm/PmoA.tbl"
+        tbl = f"{config['output_dir']}/hmm/{{genome}}_PmoA.tbl"
     threads: 4
     shell:
         "hmmsearch --cpu {threads} --cut_tc --tblout {output.tbl} {input.hmm} {input.faa} > /dev/null"
 
 rule extract_hits_pmoA:
     input:
-        faa = config["protein"],
-        tbl = f"{config['output_dir']}/hmm/PmoA.tbl"
+        faa = f"{config['output_dir']}/faa/{{genome}}.faa",
+        tbl = f"{config['output_dir']}/hmm/{{genome}}_PmoA.tbl"
     output:
-        faa = f"{config['output_dir']}/hits/PmoA_hit.faa"
+        faa = f"{config['output_dir']}/hits/{{genome}}_PmoA_hit.faa"
     script:
         "../scripts/extract_hits.py"

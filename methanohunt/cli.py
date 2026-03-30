@@ -135,6 +135,45 @@ def taxonomy(input_file, column_name, database, output_file):
 
 
 @cli.command()
+@click.option("--genome_dir", default=None, help="Input directory containing genome DNA FASTA files")
+@click.option("--faa_dir", default=None, help="Input directory containing genome protein FASTA files (.faa)")
+@click.option("--suffix", required=True, help="File extension suffix (e.g., fna, faa)")
+@click.option("-p", "--profiles", "profiles_dir", required=True, help="Path to KOfam database profiles directory")
+@click.option("-k", "--ko_list", "ko_list", required=True, help="Path to KOfam database ko_list file")
+@click.option("--taxonomy", "taxonomy_file", default=None, help="TSV file containing genome taxonomy mapping")
+@click.option("--col", "taxonomy_col", default=None, help="Column name containing GTDB taxonomy in the taxonomy file")
+@click.option("--threads", default=8, help="Number of threads to use (default: 8)")
+@click.option("--strict", is_flag=True, default=False, help="Use strict mode (requires If_key_in_enzyme to be TRUE for KO mapping)")
+@click.option("--snake-args", "snake_args", default=None, help="Additional arguments to pass directly to snakemake (e.g. '--unlock')")
+@click.option("-o", "--output", default="methanohunt_genome_out", help="Output directory path (default: methanohunt_genome_out)")
+def genome(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxonomy_file, taxonomy_col, threads, strict, snake_args, output):
+    """Run genome-based methane cycler classification."""
+    
+    if not genome_dir and not faa_dir:
+        click.echo("Error: Either --genome_dir or --faa_dir must be provided.", err=True)
+        sys.exit(1)
+        
+    if genome_dir and faa_dir:
+        click.echo("Error: Please provide only one of --genome_dir or --faa_dir.", err=True)
+        sys.exit(1)
+        
+    from .genome import run_genome_pipeline
+    run_genome_pipeline(
+        genome_dir=genome_dir,
+        faa_dir=faa_dir,
+        suffix=suffix,
+        profiles_dir=profiles_dir,
+        ko_list=ko_list,
+        taxonomy_file=taxonomy_file,
+        taxonomy_col=taxonomy_col,
+        threads=threads,
+        strict=strict,
+        snake_args=snake_args,
+        output=output
+    )
+
+
+@cli.command()
 @click.option("--target-dir", default=None, help="Directory to install papara (default: python binary dir or ~/.methanohunt/bin)")
 def setup(target_dir):
     """Download and setup external dependencies (PaPaRa)."""

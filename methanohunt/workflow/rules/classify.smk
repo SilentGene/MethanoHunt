@@ -2,36 +2,53 @@
 
 rule gappa_assign:
     input:
-        jplace = f"{config['output_dir']}/placement/{{marker}}/epa_result.jplace",
+        jplace = f"{config['output_dir']}/placement/{{genome}}/{{marker}}/epa_result.jplace",
         taxon = f"{config['database']}/{{marker}}/{{marker}}_refs_classification.tsv"
     output:
-        results = f"{config['output_dir']}/classification/{{marker}}-per_query.tsv"
+        results = f"{config['output_dir']}/classification/{{genome}}_{{marker}}-per_query.tsv"
     params:
         outdir = f"{config['output_dir']}/classification",
-        prefix = "{marker}"
+        prefix = "{genome}_{marker}"
     shell:
         """
-        gappa examine assign \
-          --jplace-path {input.jplace} \
-          --taxon-file {input.taxon} \
-          --per-query-results \
-          --best-hit \
-          --out-dir {params.outdir} \
-          --file-prefix {params.prefix}"-"
+        if [ -s {input.jplace} ]; then
+            gappa examine assign \
+              --jplace-path {input.jplace} \
+              --taxon-file {input.taxon} \
+              --per-query-results \
+              --best-hit \
+              --out-dir {params.outdir} \
+              --file-prefix {params.prefix}"-"
+        else
+            echo "Empty jplace file, skipping gappa assign"
+            touch {output.results}
+        fi
         """
 
 rule classify_genes:
     input:
-        results = expand(f"{config['output_dir']}/classification/{{marker}}-per_query.tsv", marker=MARKERS)
+        results = lambda wildcards: expand(f"{config['output_dir']}/classification/{{genome}}_{{marker}}-per_query.tsv", genome=wildcards.genome, marker=MARKERS)
     output:
-        tsv = f"{config['output_dir']}/methanohunt_gene_classification.tsv"
+        tsv = f"{config['output_dir']}/classification/{{genome}}_methanohunt_gene_classification.tsv"
     run:
         import pandas as pd
         all_dfs = []
         for f in input.results:
-            df = pd.read_csv(f, sep='\t')
-            # Extract marker from filename
-            marker = f.split('/')[-1].replace('-per_query.tsv', '')
+            try:
+                df = pd.read_csv(f, sep='\t')
+            except pd.errors.EmptyDataError:
+                continue
+            
+            if df.empty:
+                continue
+                
+            # Extract marker from filename (which is now {genome}_{marker}-per_query.tsv)
+            filename = f.split('/')[-1].replace('-per_query.tsv', '')
+            marker = 'Unknown'
+            for m in MARKERS:
+                if filename.endswith(m):
+                    marker = m
+                    break
             df['marker'] = marker
             all_dfs.append(df)
         

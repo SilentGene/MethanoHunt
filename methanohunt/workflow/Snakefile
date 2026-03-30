@@ -25,6 +25,28 @@ if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
 if config.get("run_tree"):
     targets.extend(expand(f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk", marker=MARKERS))
 
+# --- Helper rules to bridge wildcard-based subworkflow with single-input legacy behavior ---
+rule setup_query:
+    input: config["protein"]
+    output: f"{config['output_dir']}/faa/query.faa"
+    shell: "ln -sf $(realpath {input}) {output}"
+
+rule finalize_classification:
+    input: f"{config['output_dir']}/classification/query_methanohunt_gene_classification.tsv"
+    output: f"{config['output_dir']}/methanohunt_gene_classification.tsv"
+    shell: "cp {input} {output}"
+
+rule finalize_sequences:
+    input: f"{config['output_dir']}/classified_sequences/query_{{seq}}.faa"
+    output: f"{config['output_dir']}/classified_sequences/{{seq}}.faa"
+    shell: "cp {input} {output}"
+
+rule finalize_tree:
+    input: f"{config['output_dir']}/tree/query_{{marker}}.fasttree.nwk"
+    output: f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk"
+    shell: "cp {input} {output}"
+# ----------------------------------------------------------------------------------------
+
 # Set default target
 rule all:
     input: targets

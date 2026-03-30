@@ -155,7 +155,7 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
 
     # 5. Run Snakemake using subprocess (more robust across Snakemake versions)
     # Create config file in output directory
-    config_path = os.path.join(output, "methanohunt_config.yaml")
+    config_path = os.path.join(config["output_dir"], "methanohunt_config.yaml")
     with open(config_path, 'w') as f:
         yaml.dump(config, f)
     
@@ -175,7 +175,7 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
     
     try:
         print("Running Snakemake command:", " ".join(cmd))
-        subprocess.run(cmd, check=True)
+        subprocess.run(cmd, check=True, cwd=config["output_dir"])
         click.echo("Pipeline completed successfully.")
     except subprocess.CalledProcessError:
         click.echo("Error: Snakemake pipeline failed.", err=True)

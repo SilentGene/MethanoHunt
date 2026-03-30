@@ -20,6 +20,8 @@ dependencies:
   - click
   - pysam
   - biopython
+  - kofamscan
+  - prodigal
 
   # pip entry
   - pip:
