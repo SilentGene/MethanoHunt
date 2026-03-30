@@ -6,8 +6,9 @@ A pipeline to profile methane cyclers from taxonomic profiling data or functiona
 
 MethanoHunt provides several workflows:
 1.  [**Profile**](#profile-workflow): Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
-2.  [**Gene**](#gene-workflow): A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
-3.  [**Taxonomy**](#taxonomy-workflow): Find methane cyclers according to GTDB taxonomy.
+2.  [**Taxonomy**](#taxonomy-workflow): Find methane cyclers according to GTDB taxonomy.
+3.  [**Gene**](#gene-workflow): A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
+4.  [**Genome**](#genome-workflow): A pipeline to detect and classify methane cyclers from genomes/metagenome-assembled genomes.
 
 ## Installation
 
@@ -95,6 +96,25 @@ methanohunt profile -i ./singleM_results/*_singlem.tax.tsv -o methanohunt_result
 
 Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
 
+## Taxonomy Workflow
+Annotate taxonomic profiles with methane cycler information according to GTDB taxonomy.
+
+Example:
+```bash
+methanohunt taxonomy -i MAG_classification.tsv -c Taxonomy -o methanohunt_annotate_results.tsv
+```
+
+*   `-i`: Input tsv file, including a column with taxonomic classification. This table MUST contain header.
+*   `-c`: Column name of the taxonomic classification in the input tsv file.
+*   `-o`: Output tsv file.
+*   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
+
+### Output
+
+This workflow will generate a tsv file with the following two additional columns added to the input tsv file:
+
+*   `MethanoHunt_classification`: methane cycling role
+*   `MethanoHunt_subgroup`: methane cycling subgroup
 
 ## Gene Workflow
 Analyze functional genes from protein sequences.
@@ -147,33 +167,50 @@ Here is an example of the output (MethanoHunt_gene_report.html)[docs/MethanoHunt
 Screenshot of the interactive chart:
 ![MethanoHunt gene profiling report](docs/gene_profiling_report.jpg)
 
-## Taxonomy Workflow
-Annotate taxonomic profiles with methane cycler information according to GTDB taxonomy.
+### Genes that are able to be classified in this module
+| Homologue   | KO     | Classification | Description                                   | Refs                                                                 | Note             |
+|------------|--------|----------------|-----------------------------------------------|----------------------------------------------------------------------|------------------|
+| McrA       | K00399 | Methanogen     | Anaerobic methanogenesis                      | [Chadwick et al., (2022)](https://doi.org/10.1371/journal.pbio.3001508) |                  |
+| McrA       | K00399 | ANME           | Anaerobic methane oxidation                   | [Chadwick et al., (2022)](https://doi.org/10.1371/journal.pbio.3001508) |                  |
+| McrA       | K00399 | ANKA           | Anaerobic alkane oxidation                    | [Chadwick et al., (2022)](https://doi.org/10.1371/journal.pbio.3001508) |                  |
+| PmoA/AmoA  | K10944 | PmoA           | Aerobic methane oxidation (particulate)       | [Leu et al., (2025)](https://doi.org/10.1038/s41467-025-64223-2)       |                  |
+| PmoA/AmoA  | K10944 | AmoA           | Aerobic ammonia oxidation                     | [Leu et al., (2025)](https://doi.org/10.1038/s41467-025-64223-2)       |                  |
+| PmoA/AmoA  | K10944 | HMO            | Aerobic hydrocarbon oxidation                 | [Leu et al., (2025)](https://doi.org/10.1038/s41467-025-64223-2)       |                  |
+| MmoX       | K16157 | MmoX           | Aerobic methane oxidation (soluble)           | [KEGG K16157](https://www.genome.jp/dbget-bin/www_bget?ko:K16157)      |                  |
+| MmoX       | K16157 | PrmA           | Aerobic propane oxidation                     | [KEGG K16157](https://www.genome.jp/dbget-bin/www_bget?ko:K16157)      |                  |
+| MmoX       | K16157 | MimA           | Aerobic alkane oxidation                      | [KEGG K16157](https://www.genome.jp/dbget-bin/www_bget?ko:K16157)      |                  |
+| PhnJ       | K06163 | PhnJ           | Aerobic methanogenesis                        | [Boden et al., 2024](https://doi.org/10.1038/s41467-024-47914-0)       | To be implemented |
+
+
+## Genome Workflow
+Detect and classify methane cyclers from genomes/metagenome-assembled genomes.
 
 Example:
 ```bash
-methanohunt taxonomy -i MAG_classification.tsv -c Taxonomy -o methanohunt_annotate_results.tsv
+methanohunt genome --genome_dir test_genomes --suffix fa
+            -p db/kofam/profiles
+            -k db/kofam/ko_list
+            --taxonomy GenomeGTDB_sample.tsv --col GTDB
+            --threads 8 
 ```
 
-*   `-i`: Input tsv file, including a column with taxonomic classification. This table MUST contain header.
-*   `-c`: Column name of the taxonomic classification in the input tsv file.
-*   `-o`: Output tsv file.
-*   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
+*   `--genome_dir`: Directory containing the input genomes or protein sequences.
+*   `--suffix`: Suffix of the input genomes (e.g., `fa`, `fna`, `faa`).
+*   `-p`: Path to the KOFAM profiles directory.
+*   `-k`: Path to the KOFAM KO list file.
+*   `--taxonomy`: Path to the taxonomic classification file.
+*   `--col`: Column name of the taxonomic classification in the input tsv file.
+*   `--threads`: Number of threads to use.
 
 ### Output
 
-This workflow will generate a tsv file with the following two additional columns added to the input tsv file:
 
-*   `MethanoHunt_classification`: methane cycling role
-*   `MethanoHunt_subgroup`: methane cycling subgroup
+
 
 ## Database
 
 The required database files for both taxonomy and gene modules are included in the package.
 
-# Future plan 
-
-- A `genome` module that can detect methane cyclers from genomes/metagenome-assembled genomes, predict their substrates, and estimate their relative abundance.
 
 
 ...🧙‍♂️🧬

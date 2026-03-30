@@ -36,7 +36,7 @@ rule kofamscan_annotation:
     log:
         f"{outdir}/logs/kofam_{{genome}}.log"
     shell:
-        "exec_annotation -p {params.profiles} -k {input.ko_list} --cpu {threads} -f detail-tsv --e-value 1e-5 --tmp-dir {outdir}/kofam/tmp_{wildcards.genome} -o {output.raw} {input.faa} > {log} 2>&1"
+        "exec_annotation -p {params.profiles} -k {input.ko_list} --cpu {threads} -f detail-tsv --e-value 1e-5 --tmp-dir {outdir}/kofam/tmp_{wildcards.genome} -o {output.raw} {input.faa} > {log} 2>&1 && rm -rf {outdir}/kofam/tmp_{wildcards.genome}"
 
 rule kofamscan_filter:
     input:
