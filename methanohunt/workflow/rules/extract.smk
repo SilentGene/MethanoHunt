@@ -2,8 +2,8 @@
 
 rule extract_sequences:
     input:
-        classification = f"{config['output_dir']}/classification/{{genome}}_methanohunt_gene_classification.tsv",
-        protein = f"{config['output_dir']}/faa/{{genome}}.faa"
+        classification = f"{config['output_dir']}/cust_db_anno/{{genome}}_methanohunt_gene_classification.tsv",
+        protein = f"{config['output_dir']}/ORF/{{genome}}.faa"
     output:
         mcrA_methanogen = f"{config['output_dir']}/classified_sequences/{{genome}}_McrA_methanogen.faa",
         mcrA_anme = f"{config['output_dir']}/classified_sequences/{{genome}}_McrA_ANME.faa",

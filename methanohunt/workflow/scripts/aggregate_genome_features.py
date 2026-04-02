@@ -25,8 +25,10 @@ def main():
         sys.exit(1)
         
     db_df = pd.read_csv(gene_db_path, sep="\t")
+    # Dereplicate KO values as requested due to the new Methanohunt_classification column causing duplicate KOs
+    db_df = db_df.drop_duplicates(subset=["KO"])
     
-    ko_files = [f for f in glob.glob(os.path.join(args.outdir, "kofam", "*_ko.tsv")) if not f.endswith("_raw_ko.tsv")]
+    ko_files = [f for f in glob.glob(os.path.join(args.outdir, "KofamScan_anno", "*_ko.tsv")) if not f.endswith("_raw_ko.tsv")]
     genomes = []
     
     classification_map = {
@@ -63,7 +65,7 @@ def main():
         except Exception:
             ko_df = pd.DataFrame(columns=["genome", "gene_id", "ko"])
             
-        gene_f = os.path.join(args.outdir, "classification", f"{genome}_methanohunt_gene_classification.tsv")
+        gene_f = os.path.join(args.outdir, "cust_db_anno", f"{genome}_methanohunt_gene_classification.tsv")
         try:
             gene_df = pd.read_csv(gene_f, sep="\t", header=0)
         except Exception:

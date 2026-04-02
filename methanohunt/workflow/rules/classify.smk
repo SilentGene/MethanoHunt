@@ -2,12 +2,12 @@
 
 rule gappa_assign:
     input:
-        jplace = f"{config['output_dir']}/placement/{{genome}}/{{marker}}/epa_result.jplace",
+        jplace = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}/{{marker}}/epa_result.jplace",
         taxon = f"{config['database']}/{{marker}}/{{marker}}_refs_classification.tsv"
     output:
-        results = f"{config['output_dir']}/classification/{{genome}}_{{marker}}-per_query.tsv"
+        results = f"{config['output_dir']}/cust_db_anno/{{genome}}_{{marker}}-per_query.tsv"
     params:
-        outdir = f"{config['output_dir']}/classification",
+        outdir = f"{config['output_dir']}/cust_db_anno",
         prefix = "{genome}_{marker}"
     shell:
         """
@@ -27,9 +27,9 @@ rule gappa_assign:
 
 rule classify_genes:
     input:
-        results = lambda wildcards: expand(f"{config['output_dir']}/classification/{{genome}}_{{marker}}-per_query.tsv", genome=wildcards.genome, marker=MARKERS)
+        results = lambda wildcards: expand(f"{config['output_dir']}/cust_db_anno/{{genome}}_{{marker}}-per_query.tsv", genome=wildcards.genome, marker=MARKERS)
     output:
-        tsv = f"{config['output_dir']}/classification/{{genome}}_methanohunt_gene_classification.tsv"
+        tsv = f"{config['output_dir']}/cust_db_anno/{{genome}}_methanohunt_gene_classification.tsv"
     run:
         import pandas as pd
         all_dfs = []

@@ -2,8 +2,8 @@
 
 rule merge_sequences:
     input:
-        ref = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_reference.fasta",
-        qry = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_query.fasta"
+        ref = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_reference.fasta",
+        qry = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_query.fasta"
     output:
         combined = f"{config['output_dir']}/tree/{{genome}}_{{marker}}_combined.fasta"
     shell:

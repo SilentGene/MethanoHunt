@@ -4,7 +4,7 @@ A pipeline to profile methane cyclers from taxonomic profiling data or functiona
 
 ## Overview
 
-MethanoHunt provides several workflows:
+MethanoHunt provides four handy workflows:
 1.  [**Profile**](#profile-workflow): Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
 2.  [**Taxonomy**](#taxonomy-workflow): Find methane cyclers according to GTDB taxonomy.
 3.  [**Gene**](#gene-workflow): A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.

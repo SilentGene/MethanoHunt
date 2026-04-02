@@ -193,6 +193,7 @@ def main() -> None:
                     best_by_gene[gene_id] = candidate
 
     with open(args.output_file, "w", encoding="utf-8") as out:
+        out.write("genome\tgene_id\tKO\n")
         for gene_id in sorted(seen_genes):
             if gene_id not in best_by_gene:
                 continue

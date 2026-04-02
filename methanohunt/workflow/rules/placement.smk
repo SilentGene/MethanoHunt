@@ -4,13 +4,13 @@
 
 rule papara_align:
     input:
-        query = f"{config['output_dir']}/hits/{{genome}}_{{marker}}_hit.faa",
+        query = f"{config['output_dir']}/cust_db_anno/hits/{{genome}}_{{marker}}_hit.faa",
         tree = lambda wildcards: f"{config['database']}/{wildcards.marker}/{wildcards.marker}_refs_methanohunt.faa.treefile",
         phylip = lambda wildcards: f"{config['database']}/{wildcards.marker}/{wildcards.marker}_refs_methanohunt.faa.phylip"
     output:
-        aln = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_papara_alignment.{{marker}}",
-        log = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_papara_log.{{marker}}",
-        quality = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_papara_quality.{{marker}}"
+        aln = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_papara_alignment.{{marker}}",
+        log = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_papara_log.{{marker}}",
+        quality = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_papara_quality.{{marker}}"
     params:
         prefix = "{marker}"
     threads: 1
@@ -31,10 +31,10 @@ rule papara_align:
 rule epa_split:
     input:
         msa = lambda wildcards: f"{config['database']}/{wildcards.marker}/{wildcards.marker}_refs_methanohunt.faa.linsi",
-        papara_aln = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_papara_alignment.{{marker}}"
+        papara_aln = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_papara_alignment.{{marker}}"
     output:
-        ref = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_reference.fasta",
-        qry = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_query.fasta"
+        ref = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_reference.fasta",
+        qry = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_query.fasta"
     shadow: "minimal"
     shell:
         """
@@ -50,14 +50,14 @@ rule epa_split:
 
 rule epa_place:
     input:
-        ref = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_reference.fasta",
-        qry = f"{config['output_dir']}/placement/{{genome}}_{{marker}}_query.fasta",
+        ref = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_reference.fasta",
+        qry = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}_{{marker}}_query.fasta",
         tree = lambda wildcards: f"{config['database']}/{wildcards.marker}/{wildcards.marker}_refs_methanohunt.faa.treefile",
         model = lambda wildcards: f"{config['database']}/{wildcards.marker}/{wildcards.marker}.raxml.bestModel"
     output:
-        jplace = f"{config['output_dir']}/placement/{{genome}}/{{marker}}/epa_result.jplace"
+        jplace = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}/{{marker}}/epa_result.jplace"
     params:
-        outdir = f"{config['output_dir']}/placement/{{genome}}/{{marker}}"
+        outdir = f"{config['output_dir']}/cust_db_anno/placement/{{genome}}/{{marker}}"
     threads: 4
     shell:
         """
