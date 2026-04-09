@@ -166,13 +166,14 @@ def main():
     if args.taxonomy and args.col:
         try:
             tax_user_df = pd.read_csv(args.taxonomy, sep="\t")
+            tax_user_df.rename(columns=lambda x: str(x).strip('\ufeff').strip(), inplace=True)  # remove BOM
             if args.col not in tax_user_df.columns:
                  print(f"Warning: Taxonomy column '{args.col}' not found in {args.taxonomy}. Skipping taxonomy classification.")
             else:
                  if not args.name:
                       print(f"Warning: Taxonomy matching requires --name argument. Skipping taxonomy classification.")
                  elif args.name not in tax_user_df.columns:
-                      print(f"Warning: Name column '{args.name}' not found in {args.taxonomy}. Skipping taxonomy classification.")
+                      print(f"Warning: Name column '{args.name}' not found in {args.taxonomy}. Available columns: {list(tax_user_df.columns)}. Skipping taxonomy classification.")
                  else:
                       merge_col = args.name
                       
