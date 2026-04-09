@@ -10,6 +10,7 @@ def get_args():
     parser.add_argument("--db", required=True)
     parser.add_argument("--strict", action="store_true")
     parser.add_argument("--taxonomy", default=None)
+    parser.add_argument("--name", default=None)
     parser.add_argument("--col", default=None)
     parser.add_argument("--output", required=True)
     return parser.parse_args()
@@ -168,13 +169,14 @@ def main():
             if args.col not in tax_user_df.columns:
                  print(f"Warning: Taxonomy column '{args.col}' not found in {args.taxonomy}. Skipping taxonomy classification.")
             else:
-                 # Assume first column is genome id if not explicitly "Genome"
-                 if "Genome" not in tax_user_df.columns:
-                      merge_col = tax_user_df.columns[0]
+                 if not args.name:
+                      print(f"Warning: Taxonomy matching requires --name argument. Skipping taxonomy classification.")
+                 elif args.name not in tax_user_df.columns:
+                      print(f"Warning: Name column '{args.name}' not found in {args.taxonomy}. Skipping taxonomy classification.")
                  else:
-                      merge_col = "Genome"
+                      merge_col = args.name
                       
-                 out_df = out_df.merge(tax_user_df[[merge_col, args.col]], left_on="Genome", right_on=merge_col, how="left")
+                      out_df = out_df.merge(tax_user_df[[merge_col, args.col]], left_on="Genome", right_on=merge_col, how="left")
                  if merge_col != "Genome":
                       out_df.drop(columns=[merge_col], inplace=True)
                       

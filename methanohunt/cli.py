@@ -135,18 +135,19 @@ def taxonomy(input_file, column_name, database, output_file):
 
 
 @cli.command()
-@click.option("--genome_dir", default=None, help="Input directory containing genome DNA FASTA files")
-@click.option("--faa_dir", default=None, help="Input directory containing genome protein FASTA files (.faa)")
-@click.option("--suffix", required=True, help="File extension suffix (e.g., fna, faa)")
+@click.option("-i", "--genome_dir", "genome_dir", default=None, help="Input directory containing genome DNA FASTA files")
+@click.option("--faa_dir", "faa_dir", default=None, help="Input directory containing genome protein FASTA files (.faa)")
+@click.option("-s", "--suffix", "suffix", required=True, help="File extension suffix (e.g., fna, faa)")
 @click.option("-p", "--profiles", "profiles_dir", required=True, help="Path to KOfam database profiles directory")
 @click.option("-k", "--ko_list", "ko_list", required=True, help="Path to KOfam database ko_list file")
-@click.option("--taxonomy", "taxonomy_file", default=None, help="TSV file containing genome taxonomy mapping")
-@click.option("--col", "taxonomy_col", default=None, help="Column name containing GTDB taxonomy in the taxonomy file")
-@click.option("--threads", default=8, help="Number of threads to use (default: 8)")
+@click.option("-f", "--taxonomy_tsv", "taxonomy_file", default=None, help="TSV file containing genome taxonomy mapping")
+@click.option("-a", "--name_col", "name_col", default=None, help="Column name of the genome name in the input tsv file")
+@click.option("-c", "--taxonomy_col", "taxonomy_col", default=None, help="Column name containing GTDB taxonomy in the taxonomy file")
+@click.option("-t", "--threads", "threads", default=8, help="Number of threads to use (default: 8)")
 @click.option("--strict", is_flag=True, default=False, help="Use strict mode (requires If_key_in_enzyme to be TRUE for KO mapping)")
 @click.option("--snake-args", "snake_args", default=None, help="Additional arguments to pass directly to snakemake (e.g. '--unlock')")
-@click.option("-o", "--output", default="methanohunt_genome_out", help="Output directory path (default: methanohunt_genome_out)")
-def genome(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxonomy_file, taxonomy_col, threads, strict, snake_args, output):
+@click.option("-o", "--output_dir", "output", default="methanohunt_genome_out", help="Output directory path (default: methanohunt_genome_out)")
+def genome(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxonomy_file, name_col, taxonomy_col, threads, strict, snake_args, output):
     """Run genome-based methane cycler classification."""
     
     if not genome_dir and not faa_dir:
@@ -165,6 +166,7 @@ def genome(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxonomy_file, ta
         profiles_dir=profiles_dir,
         ko_list=ko_list,
         taxonomy_file=taxonomy_file,
+        name_col=name_col,
         taxonomy_col=taxonomy_col,
         threads=threads,
         strict=strict,

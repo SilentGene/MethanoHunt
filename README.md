@@ -187,20 +187,38 @@ Detect and classify methane cyclers from genomes/metagenome-assembled genomes.
 
 Example:
 ```bash
-methanohunt genome --genome_dir test_genomes --suffix fa
-            -p db/kofam/profiles
-            -k db/kofam/ko_list
-            --taxonomy GenomeGTDB_sample.tsv --col GTDB
-            --threads 8 
+
 ```
 
-*   `--genome_dir`: Directory containing the input genomes or protein sequences.
-*   `--suffix`: Suffix of the input genomes (e.g., `fa`, `fna`, `faa`).
-*   `-p`: Path to the KOFAM profiles directory.
-*   `-k`: Path to the KOFAM KO list file.
-*   `--taxonomy`: Path to the taxonomic classification file.
-*   `--col`: Column name of the taxonomic classification in the input tsv file.
-*   `--threads`: Number of threads to use.
+```powershell
+$ methanohunt genome --help
+Usage: methanohunt genome [OPTIONS]
+
+  Run genome-based methane cycler classification.
+
+Options:
+  -i, --genome_dir TEXT    Input directory containing genome DNA FASTA files
+  --faa_dir TEXT           Input directory containing genome protein FASTA
+                           files (.faa)
+  -s, --suffix TEXT        File extension suffix (e.g., fna, faa)  [required]
+  -p, --profiles TEXT      Path to KOfam database profiles directory
+                           [required]
+  -k, --ko_list TEXT       Path to KOfam database ko_list file  [required]
+  -f, --taxonomy_tsv TEXT  TSV file containing genome taxonomy mapping
+  -a, --name_col TEXT      Column name of the genome name in the input tsv
+                           file
+  -c, --taxonomy_col TEXT  Column name containing GTDB taxonomy in the
+                           taxonomy file
+  -t, --threads INTEGER    Number of threads to use (default: 8)
+  --strict                 Use strict mode (requires If_key_in_enzyme to be
+                           TRUE for KO mapping)
+  --snake-args TEXT        Additional arguments to pass directly to snakemake
+                           (e.g. '--unlock')
+  -o, --output_dir TEXT        Output directory path (default:
+                           methanohunt_genome_out)
+  --help                   Show this message and exit.
+
+```
 
 ### Output
 

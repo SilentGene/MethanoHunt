@@ -37,7 +37,7 @@ rule kofamscan_annotation:
         raw = f"{outdir}/KofamScan_anno/kofam_raw/{{genome}}_raw_ko.tsv"
     params:
         profiles = config["profiles_dir"]
-    threads: max(2, min(8, int(threads) // max(1, len(GENOMES))))
+    threads: max(min(4, int(config["threads"])), min(8, int(config["threads"]) // max(1, len(GENOMES))))
     log:
         f"{outdir}/logs/kofam_{{genome}}.log"
     shell:
@@ -76,7 +76,8 @@ rule aggregate_genome_classification:
         db = config["database"],
         strict = "--strict" if config["strict"] else "",
         # Using string representation of python arg
-        taxonomy = f"--taxonomy {config['taxonomy_file']}" if config.get("taxonomy_file") else "",
+         taxonomy = f"--taxonomy {config['taxonomy_file']}" if config.get("taxonomy_file") else "",
+        name_col = f"--name {config['name_col']}" if config.get("name_col") else "",
         tax_col = f"--col {config['taxonomy_col']}" if config.get("taxonomy_col") else "",
         outdir = outdir
     log:
@@ -88,6 +89,7 @@ rule aggregate_genome_classification:
             --db {params.db} \
             {params.strict} \
             {params.taxonomy} \
+            {params.name_col} \
             {params.tax_col} \
             --output {output.summary} \
             > {log} 2>&1
