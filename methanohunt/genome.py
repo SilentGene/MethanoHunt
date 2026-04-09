@@ -6,7 +6,7 @@ import click
 import glob
 import shlex
 
-def run_genome_pipeline(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxonomy_file, name_col, taxonomy_col, threads, strict, output, snake_args=None):
+def run_genome_pipeline(genome_dir, faa_dir, suffix, taxonomy_file, name_col, taxonomy_col, threads, strict, output, snake_args=None):
     """
     Wrapper to execute the Snakemake genome pipeline.
     """
@@ -57,13 +57,20 @@ def run_genome_pipeline(genome_dir, faa_dir, suffix, profiles_dir, ko_list, taxo
         samples[sample_name] = os.path.abspath(f)
 
     # 5. Construct configuration
+    builtin_profiles_dir = os.path.join(database, "kofamdb_reduced", "methane.hal")
+    builtin_ko_list = os.path.join(database, "kofamdb_reduced", "methanohunt_ko_list.tsv")
+
+    if not os.path.exists(builtin_profiles_dir):
+        click.echo(f"Error: Built-in KOfam profiles not found at {builtin_profiles_dir}", err=True)
+        sys.exit(1)
+
     config = {
         "is_dna": is_dna,
         "input_dir": os.path.abspath(search_dir),
         "suffix": suffix,
         "samples": samples,
-        "profiles_dir": os.path.abspath(profiles_dir),
-        "ko_list": os.path.abspath(ko_list),
+        "profiles_dir": os.path.abspath(builtin_profiles_dir),
+        "ko_list": os.path.abspath(builtin_ko_list),
         "database": os.path.abspath(database),
         "output_dir": os.path.abspath(output),
         "threads": threads,

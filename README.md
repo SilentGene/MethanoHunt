@@ -187,7 +187,14 @@ Detect and classify methane cyclers from genomes/metagenome-assembled genomes.
 
 Example:
 ```bash
-
+methanohunt genome \
+    --genome_dir my_genomes_fna_dir \
+    --suffix fna \
+    --threads 32 \
+    --taxonomy_tsv my_genomes_taxonomy.tsv \
+    --taxonomy_col GTDB_classification \
+    --name_col bin_id \
+    --output_dir methanohunt-genome_output
 ```
 
 ```powershell
@@ -201,9 +208,6 @@ Options:
   --faa_dir TEXT           Input directory containing genome protein FASTA
                            files (.faa)
   -s, --suffix TEXT        File extension suffix (e.g., fna, faa)  [required]
-  -p, --profiles TEXT      Path to KOfam database profiles directory
-                           [required]
-  -k, --ko_list TEXT       Path to KOfam database ko_list file  [required]
   -f, --taxonomy_tsv TEXT  TSV file containing genome taxonomy mapping
   -a, --name_col TEXT      Column name of the genome name in the input tsv
                            file
