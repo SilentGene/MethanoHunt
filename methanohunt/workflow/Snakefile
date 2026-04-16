@@ -16,9 +16,9 @@ targets.extend([
 
 if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
     targets.extend([
-        f"{config['output_dir']}/RPKG/RPKG_combined.tsv",
-        f"{config['output_dir']}/RPKG/RPKG_classification.tsv",
-        f"{config['output_dir']}/RPKG/RPKG_subtype.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_individual_gene.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_marker_gene.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_marker_gene_subtype.tsv",
         f"{config['output_dir']}/MethanoHunt_report.html"
     ])
 

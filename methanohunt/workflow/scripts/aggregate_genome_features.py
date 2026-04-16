@@ -3,6 +3,7 @@ import sys
 import argparse
 import pandas as pd
 import glob
+from natsort import natsort_keygen
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -101,36 +102,21 @@ def main():
         ko_classes = set()
         
         # Priority 2 checks if hmm_classes is empty
-        added_putative = False
         if not hmm_classes:
-             enzymes_found = matching_rows["Enzyme"].dropna().unique()
-             if "mcr" in enzymes_found:
-                 ko_classes.add("Methanogen")
-             if "pmo" in enzymes_found:
-                 ko_classes.add("MOB (w/ pMMO)")
-             if "mmo" in enzymes_found:
-                 ko_classes.add("MOB (w/ sMMO)")
-                 
-             if not ko_classes:
-                 # check putative
-                 methane_groups = ["Methanogenesis", "aerobic methane oxidation"]
-                 putative_df = matching_rows[
-                     matching_rows["Group"].isin(methane_groups) & 
-                     (matching_rows["Classification"] != "Acetoclastic")
-                 ]
-                 if not putative_df.empty:
-                     ko_classes.add("Methanogen (putative, mcrA absent)")
-                     added_putative = True
+             if "Methanohunt_classification" in matching_rows.columns:
+                 for c in matching_rows["Methanohunt_classification"].dropna().unique():
+                     if c in classification_map:
+                         ko_classes.add(classification_map[c])
 
         final_classes = list(hmm_classes) if hmm_classes else list(ko_classes)
-        final_class_str = "; ".join(sorted(final_classes)) if final_classes else "NA"
+        final_class_str = "; ".join(sorted(final_classes)) if final_classes else ""
 
         # Subgroup definitions
         subgroups = set()
         is_methanogen = "Methanogen" in final_classes or "Methanogen (putative, mcrA absent)" in final_classes
         if is_methanogen:
             c_found = matching_rows["Classification"].dropna()
-            e_found = set(matching_rows["Enzyme"].dropna())
+            e_found = set([str(x).lower() for x in matching_rows["Enzyme"].dropna()])
             
             # Note: "Acetoclastic" or "Hydrogenotrophic" can be part of strings like "Hydrogenotrophic & Acetotrophic"
             # It's safer to use str.contains
@@ -141,7 +127,7 @@ def main():
             if "mta" in e_found:
                 subgroups.add("Methylotrophic methanogen (Methanol)")
                 
-            has_mtbA = "mtbA" in e_found
+            has_mtbA = "mtba" in e_found
             if has_mtbA:
                 if "mtm" in e_found:
                     subgroups.add("Methylotrophic methanogen (Methylamine)")
@@ -214,6 +200,13 @@ def main():
          # Empty columns if not requested (as per example)
          out_df["Classification by taxonomy (methanohunt)"] = ""
          out_df["Subgroup by taxonomy (methanohunt)"] = ""
+
+    cols_to_check = [c for c in out_df.columns if c != "Genome"]
+    out_df[cols_to_check] = out_df[cols_to_check].replace(r'^\s*$', pd.NA, regex=True)
+    out_df.dropna(subset=cols_to_check, how='all', inplace=True)
+    out_df.fillna("", inplace=True)
+
+    out_df.sort_values(by="Genome", key=natsort_keygen(), inplace=True)
 
     out_df.to_csv(args.output, sep="\t", index=False)
     print(f"Summary saved to {args.output}")

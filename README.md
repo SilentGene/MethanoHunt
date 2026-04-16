@@ -32,7 +32,8 @@ conda activate methanohunt
 methanohunt setup  # to install PaPaRa
 ```
 
-> **Note:** During the environment installation, you may see a message from `kofamscan` asking you to download its database from `ftp.genome.jp`. **Please ignore this message.** You do NOT need to download the official KOfam database, as MethanoHunt relies on its own curated databases.
+> [!NOTE]
+> During the environment installation, you may see a message from `kofamscan` asking you to download its database from `ftp.genome.jp`. **Please ignore this message.** You do NOT need to download the official KOfam database, as MethanoHunt relies on its own curated databases.
 
 ## Profile Workflow
 Analyze taxonomic abundance tables.
@@ -57,17 +58,6 @@ Options:
                         (Sample\tGroup)
   --help                Show this message and exit.
 ```
-
-### Database Format
-
-The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. It contains the following columns:
-
-- `GTDB_taxonomy`: Taxonomic identifier
-- `Subgroup`: Metabolic subgroup
-- `Classification`: Functional classification
-- `Exception_subgroup` (optional): Comma-separated subgroups to exclude
-
-> You can customize the database by editing this TSV file.
 
 ### Input profile file format
 
@@ -154,9 +144,6 @@ sylph-tax merge sylph_results/sylphmpa/*.sylphmpa --column relative_abundance -o
 methanohunt profile --input_wide sylph_results/sylph-tax_profile.tsv -o methanohunt-profile_dir
 ```
 </details>
-
-
-
 
 > [!NOTE]
 > Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
@@ -296,7 +283,7 @@ Options:
 
 ## Database
 
-The required database files for both taxonomy and gene modules are included in the package.
+The required database files for both taxonomy and gene modules are included in the package. Experts are welcome to edit the database files for your own needs.
 
 
 

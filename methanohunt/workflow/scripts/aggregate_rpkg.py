@@ -12,8 +12,13 @@ def aggregate_rpkg(rpkg_files, classification_file, out_combined, out_class, out
     if 'subtype' not in cls_df.columns: cls_df['subtype'] = 'Unknown'
 
     gene_to_class = dict(zip(cls_df['gene_id'], cls_df['classification']))
-    gene_to_subtype = dict(zip(cls_df['gene_id'], cls_df['subtype']))
-
+    gene_to_subtype = {}
+    for gene, subtype in zip(cls_df['gene_id'], cls_df['subtype']):
+        cls = gene_to_class.get(gene, '')
+        if 'McrA' in str(cls) and not str(subtype).startswith('McrA-'):
+            gene_to_subtype[gene] = f"McrA-{subtype}"
+        else:
+            gene_to_subtype[gene] = subtype
     # 2. Combine Samples
     combined_df = pd.DataFrame() 
     
