@@ -57,7 +57,7 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 - `GTDB_taxonomy`: Taxonomic identifier
 - `Subgroup`: Metabolic subgroup
 - `Classification`: Functional classification
-- `Exception_taxonomy` (optional): Comma-separated taxa to exclude
+- `Exception_subgroup` (optional): Comma-separated subgroups to exclude
 
 > You can customize the database by editing this TSV file.
 

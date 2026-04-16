@@ -2,7 +2,7 @@ Group	Classification	Enzyme	EC	Subunit	KO	Methanohunt_classification	If_key_in_e
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrA	K00399	McrA (methanogen)	TRUE	mcr	Kofam currently cannot reliably distinguish methanogen-type mcr and ANME-type mcr
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrA	K00399	McrA (ANME)	TRUE	mcr	Kofam currently cannot reliably distinguish methanogen-type mcr and ANME-type mcr
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrA	K00399	McrA (ANKA)	TRUE	mcr	Kofam currently cannot reliably distinguish methanogen-type mcr and ANME-type mcr
-Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	AtwA	K00400		FALSE	mcr	
+Methanogenesis	Methanogenesis (mcr)	Atw	2.8.4.1	AtwA	K00400		FALSE	atw	Component A2 is an ATPase activated by MCR
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrB	K00401		FALSE	mcr	
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrG	K00402		FALSE	mcr	
 Methanogenesis	Methanogenesis (mcr)	Mcr	2.8.4.1	McrC	K03421		FALSE	mcr	

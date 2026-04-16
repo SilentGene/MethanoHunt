@@ -1,0 +1,57 @@
+Phylum tuple:
+d__Archaea; p__Methanobacteriota
+d__Archaea; p__Methanobacteriota_B
+
+Class tuple:
+d__Archaea; p__AGJL01; c__Methanococci
+d__Archaea; p__Halobacteriota; c__Methanocellia
+d__Archaea; p__Halobacteriota; c__Methanoliparia
+d__Archaea; p__Halobacteriota; c__Methanomicrobia
+d__Archaea; p__Halobacteriota; c__Methanonatronarchaeia
+d__Archaea; p__Halobacteriota; c__Methanosarcinia
+d__Archaea; p__JAADCQ01; c__Methanopyri
+d__Archaea; p__Methanobacteriota; c__Methanobacteria
+d__Archaea; p__Thermoproteota; c__Methanomethylicia
+
+Order tuple:
+d__Archaea; p__AGJL01; c__Methanococci; o__Methanococcales
+d__Archaea; p__Halobacteriota; c__Bog-38; o__Methanoflorentales
+d__Archaea; p__Halobacteriota; c__Methanocellia; o__Methanocellales
+d__Archaea; p__Halobacteriota; c__Methanoliparia; o__Methanoliparales
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales
+d__Archaea; p__Halobacteriota; c__Methanonatronarchaeia; o__Methanonatronarchaeales
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanotrichales
+d__Archaea; p__JAADCQ01; c__Methanopyri; o__Methanopyrales
+d__Archaea; p__Methanobacteriota; c__Methanobacteria; o__Methanobacteriales
+d__Archaea; p__Methanobacteriota_B; c__Thermococci; o__Methanofastidiosales
+d__Archaea; p__Thermoplasmatota; c__Thermoplasmata; o__Methanomassiliicoccales
+d__Archaea; p__Thermoproteota; c__Methanomethylicia; o__Methanomethylicales
+
+Family tuple:
+d__Archaea; p__AGJL01; c__Methanococci; o__Methanococcales; f__Methanocaldococcaceae
+d__Archaea; p__AGJL01; c__Methanococci; o__Methanococcales; f__Methanococcaceae
+d__Archaea; p__Halobacteriota; c__Bog-38; o__Methanoflorentales; f__Methanoflorentaceae
+d__Archaea; p__Halobacteriota; c__Methanocellia; o__Methanocellales; f__Methanocellaceae
+d__Archaea; p__Halobacteriota; c__Methanoliparia; o__Methanoliparales; f__Methanoliparaceae
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales; f__Methanocorpusculaceae
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales; f__Methanoculleaceae
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales; f__Methanofollaceae
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales; f__Methanomicrobiaceae
+d__Archaea; p__Halobacteriota; c__Methanomicrobia; o__Methanomicrobiales; f__Methanospirillaceae
+d__Archaea; p__Halobacteriota; c__Methanonatronarchaeia; o__Methanonatronarchaeales; f__Methanonatronarchaeaceae
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanocomedenaceae
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanogasteraceae
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanoperedenaceae
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanosarcinales; f__Methanosarcinaceae
+d__Archaea; p__Halobacteriota; c__Methanosarcinia; o__Methanotrichales; f__Methanotrichaceae
+d__Archaea; p__Halobacteriota; c__Syntropharchaeia; o__Alkanophagales; f__Methanospirareceae
+d__Archaea; p__JAADCQ01; c__Methanopyri; o__Methanopyrales; f__Methanopyraceae
+d__Archaea; p__Methanobacteriota; c__Methanobacteria; o__DSM-2088; f__Methanothermaceae
+d__Archaea; p__Methanobacteriota; c__Methanobacteria; o__Methanobacteriales; f__Methanobacteriaceae
+d__Archaea; p__Methanobacteriota; c__Methanobacteria; o__Methanobacteriales; f__Methanothermobacteraceae
+d__Archaea; p__Methanobacteriota_B; c__Thermococci; o__Methanofastidiosales; f__Methanofastidiosaceae
+d__Archaea; p__Thermoplasmatota; c__Thermoplasmata; o__Methanomassiliicoccales; f__Methanomassiliicoccaceae
+d__Archaea; p__Thermoplasmatota; c__Thermoplasmata; o__Methanomassiliicoccales; f__Methanomethylophilaceae
+d__Archaea; p__Thermoproteota; c__Methanomethylicia; o__Methanomethylicales; f__Methanomethylicaceae
+

@@ -15,25 +15,21 @@ def cli():
     pass
 
 @cli.command()
-@click.option("-i", "--input", "input_files", multiple=True, required=False, help="Input tax.tsv files (supports glob patterns)")
+@click.option("--input_wide", default=None, help="Input TSV profile file in wide format (first column: taxonomy, rest: samples)")
+@click.option("--input_long", default=None, help="Input TSV profile file in long format with columns: sample, taxonomy, relative_abundance")
 @click.option("-db", "--database", default=None, help="Path to MethanoHunt database file")
 @click.option("-o", "--output", required=True, help="Output directory path (will be created if not exists)")
 @click.option("-g", "--group", "group_file", default=None, help="Tab-separated file for grouping samples (Sample\\tGroup)")
-@click.argument("extra_files", nargs=-1)
-def profile(input_files, database, output, group_file, extra_files):
+def profile(input_wide, input_long, database, output, group_file):
     """Run taxonomy-based profiling.
     
-    Accepts input files via -i/--input or as positional arguments (e.g. *.tsv).
+    Accepts either --input_wide or --input_long files.
     """
     try:
-        # Combine inputs from flag and positional args
-        all_inputs = list(input_files) + list(extra_files)
-        
-        if not all_inputs:
-             raise click.UsageError("No input files provided. Use -i or positional arguments.")
+        if bool(input_wide) == bool(input_long):
+             raise click.UsageError("Exactly one of --input_wide or --input_long must be provided.")
 
-        # run_profile expects list of patterns or files.
-        run_profile(all_inputs, database, output, group_file)
+        run_profile(input_wide, input_long, database, output, group_file)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
