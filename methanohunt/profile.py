@@ -448,11 +448,11 @@ def run_profile(input_wide, input_long, database_path, output_dir, group_file=No
     
     if "Classification" in level_2_df.columns:
         level_2_grouped = level_2_df.groupby("Classification").sum(numeric_only=True)
-        level_2_transposed = level_2_grouped.T
-        level_2_transposed.index.name = "Sample"
+        # Restore Classification as a standard column. Samples are now columns (left to right).
+        level_2_grouped.reset_index(inplace=True)
         
         tsv_level_2 = f"{output_prefix}_level_2.tsv"
-        level_2_transposed.to_csv(tsv_level_2, sep="\t")
+        level_2_grouped.to_csv(tsv_level_2, sep="\t", index=False)
         print(f"Saved aggregated relative abundance results to {tsv_level_2}")
 
     generate_stacked_bar_chart(result, output_prefix, group_file)

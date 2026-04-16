@@ -5,7 +5,7 @@ A pipeline to profile methane cyclers from taxonomic profiling data or functiona
 ## Overview
 
 MethanoHunt provides four handy workflows:
-1.  [**Profile**](#profile-workflow): Summarizes relative abundance of methane cyclers from taxonomic profiles (e.g. singleM).
+1.  [**Profile**](#profile-workflow): Summarizes relative abundance of methane cyclers from a taxonomic profiles (e.g. results from MetaPhlAn/SingleM/Sylph).
 2.  [**Taxonomy**](#taxonomy-workflow): Find methane cyclers according to GTDB taxonomy.
 3.  [**Gene**](#gene-workflow): A pipeline to detect, classify, and quantify methane cycling marker genes (McrA, PmoA, MmoX) from protein sequences.
 4.  [**Genome**](#genome-workflow): A pipeline to detect and classify methane cyclers from genomes/metagenome-assembled genomes.
@@ -27,27 +27,35 @@ Use conda to install all depencies except PaPaRa which needs another step.
 
 ```bash
 git clone https://github.com/SilentGene/MethanoHunt.git
-conda env create -f methanohunt.yaml
+conda env create -f methanohunt.yaml  # create a conda env named "methanohunt and install dependencies"
 conda activate methanohunt
 methanohunt setup  # to install PaPaRa
 ```
 
+> **Note:** During the environment installation, you may see a message from `kofamscan` asking you to download its database from `ftp.genome.jp`. **Please ignore this message.** You do NOT need to download the official KOfam database, as MethanoHunt relies on its own curated databases.
+
 ## Profile Workflow
 Analyze taxonomic abundance tables.
 
-```bash
-methanohunt profile -i singleM_results/*.tax.tsv -o methanohunt_results [-db taxonomy_db.tsv --group sample_group.tsv]
+```powershell
+$ methanohunt profile --help
+Usage: methanohunt profile [OPTIONS]
 
-*   `-i`: Input taxonomy tables (supports glob patterns).
-*   `-o`: Prefix for Output files. It will generate a TSV result and an HTML report.
-*   `-db`: (Optional) Custom database path. If not provided, it will use the default database installed along with the pipeline.
-*   `--group/-g`: (Optional) User can provide a tsv file to group samples. Then the pipeline will generate a grouped visualization. The tsv file should have the following format:
+  Run taxonomy-based profiling.
 
-    sample1	group1
-    sample2	group1
-    sample3	group2
-    sample4	group2
-    
+  Accepts either --input_wide or --input_long files.
+
+Options:
+  --input_wide TEXT     Input TSV profile file in wide format (first column:
+                        taxonomy, rest: samples)
+  --input_long TEXT     Input TSV profile file in long format with columns:
+                        sample, taxonomy, relative_abundance
+  -db, --database TEXT  Path to MethanoHunt database file
+  -o, --output TEXT     Output directory path (will be created if not exists)
+                        [required]
+  -g, --group TEXT      Tab-separated file for grouping samples
+                        (Sample\tGroup)
+  --help                Show this message and exit.
 ```
 
 ### Database Format
@@ -61,7 +69,15 @@ The [TSV database file](methanohunt_db.tsv) will be downloaded with the script. 
 
 > You can customize the database by editing this TSV file.
 
-### An example workflow from raw reads to MethanoHunt profile mode results
+### Input profile file format
+
+MethanoHunt accepts two input profile file formats:
+
+1. **Wide format**: (`--input_wide`) First column is taxonomy, rest are samples
+2. **Long format**: (`--input_long`) Columns are sample, taxonomy, relative_abundance
+
+<details>
+  <summary>➡️ An example workflow from raw reads to MethanoHunt profile result via SingleM</summary>
 
 Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
 
@@ -74,27 +90,76 @@ cd /my/raw_reads/  # change to the directory with your FASTQ files
 SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')  # get sample names
 conda activate singlem  # activate your singleM conda environment
 
-mkdir -p ../singleM_results  # create singleM output directory
+cd ..
+mkdir -p singleM_results  # create singleM output directory
 
 # Run singleM for each sample
 for SAMPLE in $SAMPLES; do
-    singlem pipe -1 ${SAMPLE}_R1.fastq.gz -2 ${SAMPLE}_R2.fastq.gz --threads 4 \
-    --taxonomic-profile ../singleM_results/"$SAMPLE"_singlem.tax.tsv \
-    --taxonomic-profile-krona ../singleM_results/"$SAMPLE"_singlem.tax-krona.html \
-    --otu-table ../singleM_results/"$SAMPLE"_singlem.otu.tsv
+    # Run singleM pipe for each sample
+    singlem pipe -1 /my/raw_reads/${SAMPLE}_R1.fastq.gz -2 /my/raw_reads/${SAMPLE}_R2.fastq.gz --threads 4 \
+        --taxonomic-profile singleM_results/"$SAMPLE"_singlem.tax.tsv \
+        --taxonomic-profile-krona singleM_results/"$SAMPLE"_singlem.tax-krona.html \
+        --otu-table singleM_results/"$SAMPLE"_singlem.otu.tsv
+    # Summarise the taxonomic profile to get long format profile
+    singlem summarise --input-taxonomic-profile singleM_results/"$SAMPLE"_singlem.tax.tsv \
+        --output-taxonomic-profile-with-extras singleM_results/"$SAMPLE"_singlem.long.tsv
 done
+
+# Merge all the long format files
+awk 'FNR==1 && NR>1 {next} NF>0' singleM_results/*_singlem.long.tsv > singleM_results/singleM_long_merged.tsv
 ```
 
 **Step 2**: Run MethanoHunt on the generated taxonomic profiles
 
 ```bash
 
-methanohunt profile -i ./singleM_results/*_singlem.tax.tsv -o methanohunt_results
+methanohunt profile --input_long singleM_results/singleM_long_merged.tsv -o methanohunt-profile_dir
+```
+</details>
+
+<details>
+  <summary>➡️ An example workflow from raw reads to MethanoHunt profile result via Sylph</summary>
+
+  Suppose you have 10 paired-end metagenomic samples in FASTQ format with filenames like `sample1_R1.fastq.gz`/`sample1_R2.fastq.gz`, `sample2_R1.fastq.gz`/`sample2_R2.fastq.gz`, and so on.
+
+**Step 1**: Run Sylph to generate taxonomic profiles
+
+```bash
+cd /my/raw_reads/  # change to the directory with your FASTQ files
+SAMPLES=$(ls *_R1.fastq.gz | sed 's/_R1.fastq.gz//')  # get sample names
+conda activate sylph  # activate your sylph conda environment
+
+cd ..
+mkdir -p sylph_results  # create sylph output directory
+
+# run sylph
+sylph profile $DB_DIR/gtdb-r226-c200-dbv1.syldb \
+    -1 *_R1.fastq.gz \
+    -2 *_R2.fastq.gz \
+    -t $(nproc) \
+    > sylph_results/sylph_profile.txt
+
+# run sylph-tax
+mkdir -p sylph_results/sylphmpa
+sylph-tax taxprof sylph_results/sylph_profile.txt -t GTDB_r226 -o sylph_results/sylphmpa/
+
+# merge results to wide format
+sylph-tax merge sylph_results/sylphmpa/*.sylphmpa --column relative_abundance -o sylph_results/sylph-tax_profile.tsv
 ```
 
-### Notes
+**Step 2**: Run MethanoHunt on the generated wide format taxonomic profiles
 
-Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
+```bash
+
+methanohunt profile --input_wide sylph_results/sylph-tax_profile.tsv -o methanohunt-profile_dir
+```
+</details>
+
+
+
+
+> [!NOTE]
+> Taxonomy-based classifications may have false positives. Verification with functional gene analysis is recommended.
 
 ## Taxonomy Workflow
 Annotate taxonomic profiles with methane cycler information according to GTDB taxonomy.
