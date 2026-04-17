@@ -25,14 +25,18 @@ if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
 if config.get("run_tree"):
     targets.extend(expand(f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk", marker=MARKERS))
 
+# Set default target (MUST be the first rule in the file)
+rule all:
+    input: targets
+
 # --- Helper rules to bridge wildcard-based subworkflow with single-input legacy behavior ---
 rule setup_query:
     input: config["protein"]
-    output: f"{config['output_dir']}/faa/query.faa"
-    shell: "ln -sf $(realpath {input}) {output}"
+    output: f"{config['output_dir']}/ORF/query.faa"
+    shell: "mkdir -p $(dirname {output}) && ln -sf $(realpath {input}) {output}"
 
 rule finalize_classification:
-    input: f"{config['output_dir']}/classification/query_methanohunt_gene_classification.tsv"
+    input: f"{config['output_dir']}/cust_db_anno/query_methanohunt_gene_classification.tsv"
     output: f"{config['output_dir']}/methanohunt_gene_classification.tsv"
     shell: "cp {input} {output}"
 
@@ -45,11 +49,11 @@ rule finalize_tree:
     input: f"{config['output_dir']}/tree/query_{{marker}}.fasttree.nwk"
     output: f"{config['output_dir']}/tree/{{marker}}.fasttree.nwk"
     shell: "cp {input} {output}"
+# Note: tree.smk uses {genome}_{marker}.fasttree.nwk pattern.
+# For the gene module (single query), genome wildcard = "query",
+# so fasttree_build produces tree/query_{marker}.fasttree.nwk which
+# finalize_tree above copies to tree/{marker}.fasttree.nwk.
 # ----------------------------------------------------------------------------------------
-
-# Set default target
-rule all:
-    input: targets
 
 # Include modular rules
 include: "rules/hmm_mcrA.smk"

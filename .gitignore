@@ -12,3 +12,4 @@ methanohunt_results/
 *.sto
 *.tbl
 test/
+methanohunt-for-developer.yaml
