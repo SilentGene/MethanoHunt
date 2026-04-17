@@ -47,8 +47,8 @@ if config.get("samples") and config.get("nucl"):
             rpkgs = expand(f"{config['output_dir']}/quant/{{sample}}_rpkg.tsv", sample=config["samples"].keys()),
             classification = f"{config['output_dir']}/methanohunt_gene_classification.tsv"
         output:
-            combined = f"{config['output_dir']}/RPKG/RPKG_individual_gene.tsv",
-            class_tsv = f"{config['output_dir']}/RPKG/RPKG_marker_gene.tsv",
-            subtype_tsv = f"{config['output_dir']}/RPKG/RPKG_marker_gene_subtype.tsv"
+            combined = f"{config['output_dir']}/RPKG/RPKG_by_ORF.tsv",
+            class_tsv = f"{config['output_dir']}/RPKG/RPKG_by_classification.tsv",
+            subtype_tsv = f"{config['output_dir']}/RPKG/RPKG_by_subtype.tsv"
         script:
             "../scripts/aggregate_rpkg.py"

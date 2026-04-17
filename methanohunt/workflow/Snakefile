@@ -16,9 +16,10 @@ targets.extend([
 
 if config.get("nucl") and (config.get("reads_1") or config.get("samples")):
     targets.extend([
-        f"{config['output_dir']}/RPKG/RPKG_individual_gene.tsv",
-        f"{config['output_dir']}/RPKG/RPKG_marker_gene.tsv",
-        f"{config['output_dir']}/RPKG/RPKG_marker_gene_subtype.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_by_ORF.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_by_classification.tsv",
+        f"{config['output_dir']}/RPKG/RPKG_by_subtype.tsv",
+        f"{config['output_dir']}/RPKG_by_classification.tsv",
         f"{config['output_dir']}/MethanoHunt_report.html"
     ])
 
@@ -53,6 +54,11 @@ rule finalize_tree:
 # For the gene module (single query), genome wildcard = "query",
 # so fasttree_build produces tree/query_{marker}.fasttree.nwk which
 # finalize_tree above copies to tree/{marker}.fasttree.nwk.
+
+rule symlink_rpkg_classification:
+    input: f"{config['output_dir']}/RPKG/RPKG_by_classification.tsv"
+    output: f"{config['output_dir']}/RPKG_by_classification.tsv"
+    shell: "ln -sf RPKG/RPKG_by_classification.tsv {output}"
 # ----------------------------------------------------------------------------------------
 
 # Include modular rules
