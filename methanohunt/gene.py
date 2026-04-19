@@ -3,6 +3,7 @@ import sys
 import subprocess
 import yaml
 import click
+import logging
 
 import glob
 import re
@@ -141,17 +142,31 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
         
     config["samples"] = samples
 
-    print(f"Starting MethanoHunt Gene Pipeline...")
-    print(f"  Snakemake: {snakefile_path}")
-    print(f"  Output: {output}")
-    print(f"  Database: {database}")
-    print(f"  Threads: {threads}")
+    # Set up logging to both console and file
+    log_file = os.path.join(config["output_dir"], "methanohunt_gene.log")
+    logger = logging.getLogger("methanohunt.gene")
+    logger.setLevel(logging.INFO)
+    logger.handlers.clear()
+
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler(log_file)
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    logger.info("Starting MethanoHunt Gene Pipeline...")
+    logger.info(f"  Snakemake: {snakefile_path}")
+    logger.info(f"  Output: {output}")
+    logger.info(f"  Database: {database}")
+    logger.info(f"  Threads: {threads}")
     if samples:
-        print(f"  Samples: {len(samples)} pairs detected.")
+        logger.info(f"  Samples: {len(samples)} pairs detected.")
         for name, data in samples.items():
-            print(f"    - {name}:")
-            print(f"      R1: {data['r1']}")
-            print(f"      R2: {data['r2']}")
+            logger.info(f"    - {name}:")
+            logger.info(f"      R1: {data['r1']}")
+            logger.info(f"      R2: {data['r2']}")
 
     # 5. Run Snakemake using subprocess (more robust across Snakemake versions)
     # Create config file in output directory
@@ -159,10 +174,10 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
     with open(config_path, 'w') as f:
         yaml.dump(config, f)
     
-    print(f"Configuration written to: {config_path}")
+    logger.info(f"Configuration written to: {config_path}")
 
     cmd = [
-        "snakemake",
+        "python", "-m", "snakemake",
         "-s", snakefile_path,
         "--configfile", config_path,
         "--cores", str(threads),
@@ -174,14 +189,14 @@ def run_gene_pipeline(prot, nucl, reads_1, reads_2, mapper, database, output, ma
     # Since config paths are absolute, running from CWD is fine.
     
     try:
-        print("Running Snakemake command:", " ".join(cmd))
+        logger.info("Running Snakemake command: " + " ".join(cmd))
         subprocess.run(cmd, check=True, cwd=config["output_dir"])
-        click.echo("Pipeline completed successfully.")
+        logger.info("Pipeline completed successfully.")
     except subprocess.CalledProcessError:
-        click.echo("Error: Snakemake pipeline failed.", err=True)
+        logger.error("Snakemake pipeline failed.")
         sys.exit(1)
     except FileNotFoundError:
-        click.echo("Error: 'snakemake' command not found. Please ensure Snakemake is installed and in your PATH.", err=True)
+        logger.error("'snakemake' command not found. Please ensure Snakemake is installed and in your PATH.")
         sys.exit(1)
     finally:
         pass

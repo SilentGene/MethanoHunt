@@ -95,7 +95,7 @@ def run_genome_pipeline(genome_dir, faa_dir, suffix, taxonomy_file, name_col, ta
     click.echo(f"Configuration written to: {config_path}")
 
     cmd = [
-        "snakemake",
+        "python", "-m", "snakemake",
         "-s", snakefile_path,
         "--configfile", config_path,
         "--cores", str(threads),

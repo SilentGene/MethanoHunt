@@ -5,7 +5,7 @@ rule minimap_index:
         idx = f"{config['output_dir']}/classified_sequences/all_classified_sequences.ffn.mmi"
     threads: 1
     shell:
-        "minimap2 -d {output.idx} {input.ref}"
+        "minimap2 -d {output.idx} {input.ref} 2>/dev/null"
 
 rule minimap_map:
     input:
@@ -17,8 +17,9 @@ rule minimap_map:
     threads: 4
     shell:
         """
-        minimap2 -ax sr -t {threads} {input.idx} {input.r1} {input.r2} | \
+        minimap2 -ax sr -t {threads} {input.idx} {input.r1} {input.r2} 2>/dev/null | \
         samtools view -bS - | \
         samtools sort -@ {threads} -o {output.bam} -
         samtools index {output.bam}
         """
+
